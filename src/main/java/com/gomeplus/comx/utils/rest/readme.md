@@ -1,0 +1,3 @@
+-   业务无关，可以移动入util
+-   requestMessage 初始化传入bootstrap
+-   @zhoaqing 设计时， requestMessage 同时作为client请求时的封装（是否保留这个设计?）
