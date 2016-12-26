@@ -15,7 +15,7 @@ import java.util.Set;
 public class Config {
     protected JSONObject dataObject;
     //protected JSONArray  dataArray;
-    protected HashMap<String, Config> subs;
+    protected HashMap<String, Config> subs = new HashMap<>();
 
     public Config(JSONObject dataObject)      {this.dataObject = dataObject;}
     //public Config(JSONArray dataArray)  {this.dataArray = dataArray;}
@@ -28,7 +28,8 @@ public class Config {
 
     /**
      * TODO str & rstr 修正逻辑
-     * @param key
+     * @param key           key
+     * @param defaultValue 默认值
      * @return String
      */
     public String str(String key, String defaultValue){
@@ -37,10 +38,10 @@ public class Config {
     }
     public String rstr(String key) throws ConfigException{
         String rvalue = "";
-        if (!dataObject.containsKey(key)) {
-            rvalue = this.str(key, "");
+        if (dataObject.containsKey(key)) {
+            rvalue = this.str(key, null);
         }
-        if (rvalue.isEmpty()) {
+        if (rvalue == null) {
             throw new ConfigException("get rstr failed. key:"+ key + " config.dataObject:"+ dataObject);
         }
         return rvalue;
@@ -115,6 +116,7 @@ public class Config {
             if (restrict) {
                 throw new ConfigException("sub node does not exist. FIELD[" + key + "]");
             }
+            return new Config(new JSONObject());
         }
         Object arr = dataObject.get(key);
         if (arr instanceof JSONObject){

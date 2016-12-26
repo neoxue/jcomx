@@ -8,6 +8,7 @@ import com.gomeplus.comx.schema.datadecor.decors.AbstractDecor;
 import com.gomeplus.comx.schema.datadecor.DecorFactory;
 import com.gomeplus.comx.schema.datadecor.decors.UnknownDecorTypeException;
 import com.gomeplus.comx.utils.config.ConfigException;
+import com.gomeplus.comx.utils.rest.ResponseMessage;
 import com.gomeplus.comx.utils.rest.Url;
 
 /**
@@ -23,12 +24,13 @@ public class Handler {
             JSONObject data = new JSONObject();
             context.getLogger().log("in url" + url.getUrl(), "info");
 
-            Schema schema   = SchemaLoader.load(ComxConfLoader.COMX_HOME + "apis/v2/ext/social/group", "get");
+            Schema schema   = SchemaLoader.load(url.getPath(), "get");
             context.setSchema(schema);
             // TODO 处理登录验证
-            AbstractDecor rootdecor = DecorFactory.create(schema.getConf());
+            AbstractDecor rootdecor = DecorFactory.create(schema.getConf(), AbstractDecor.TYPE_ROOT);
             rootdecor.decorate(data, context);
-            context.getResponse().setData(data);
+            ResponseMessage responseMessage = context.getResponse();
+            responseMessage.setData(data);
         } catch (ConfigException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());

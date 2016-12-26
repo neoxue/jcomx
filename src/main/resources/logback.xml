@@ -21,11 +21,10 @@
 
 
     <!-- logback为java中的包 -->
-    <logger name="com.xue.java.util"/>
-    <logger name="com.xue.java.util.log"  level="INFO" additivity="true">
+    <logger name="com.gomeplus.comx"  level="TRACE" additivity="true">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE" />
     </logger>
     <root level="DEBUG">
-        <appender-ref ref="FILE" />
     </root>
 </configuration>

@@ -11,17 +11,17 @@ public class DecorFactory
     public static AbstractDecor create(Config conf, String forceType) throws UnknownDecorTypeException
     {
         String type;
-        if (forceType.isEmpty()) {
+        if (!forceType.isEmpty()) {
            type = forceType;
         } else {
            type = conf.str(AbstractDecor.FIELD_TYPE, AbstractDecor.TYPE_EACH);
         }
-        switch (type) {
+        switch (type.toLowerCase()) {
             case "each":        return new EachDecor(conf);
             case "root":        return new RootDecor(conf);
             case "composition": return new CompositionDecor(conf);
 
-            default: throw new UnknownDecorTypeException();
+            default: throw new UnknownDecorTypeException(type);
         }
     }
 

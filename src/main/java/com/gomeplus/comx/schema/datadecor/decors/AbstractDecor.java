@@ -40,7 +40,7 @@ public abstract class AbstractDecor extends ConfBaseNode{
     public AbstractDecor(Config conf){
         super(conf);
     }
-    abstract public void doDecorate(Object data, Context context) throws ConfigException;
+    abstract public void doDecorate(Object data, Context context) throws ConfigException, Exception;
     abstract public String getType();
 
 
@@ -64,6 +64,8 @@ public abstract class AbstractDecor extends ConfBaseNode{
             this.executeChildDecors(data, context);
             // TODO decorCache set after children;
         } catch(Exception ex) {
+            context.getLogger().error("decorate error:" + ex.getMessage());
+            ex.printStackTrace();
             // TODO onError 流程
             // TODO 对于ConfigException 需要直接抛出？
             // TODO UnknownDecorTypeException
@@ -91,6 +93,7 @@ public abstract class AbstractDecor extends ConfBaseNode{
         for(String key: keys){
             Config conf = children.sub(key);
             AbstractDecor decor = DecorFactory.create(conf);
+            decor.decorate(data, context);
         }
     }
 }

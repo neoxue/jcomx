@@ -29,6 +29,7 @@ class ComxHandler extends AbstractHandler {
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
+        /*
         RequestMessage requestMessage = new RequestMessage();
         // build context
         Enumeration headersNames2 = request.getHeaderNames();
@@ -54,6 +55,9 @@ class ComxHandler extends AbstractHandler {
         ResponseMessage responseMessage = BootStrap.start(requestMessage);
 
         // 将服务器处理后的结果返回给调用URL的客户端
+        print(baseRequest, response, responseMessage);
+        */
+        ResponseMessage responseMessage = new ResponseMessage(null, "", "200");
         print(baseRequest, response, responseMessage);
     }
 

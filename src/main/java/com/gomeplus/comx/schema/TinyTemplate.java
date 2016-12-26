@@ -44,6 +44,7 @@ public class TinyTemplate {
     // 在不使用反射的情况下做到比较不方便
     // TODO 优化
     // 现在的做法是，令vars 以及之后每一层都 imlements Map;
+    // fastjson JSONPath 可以考虑
     public String replace(String matched, Context context) {
         context.getLogger().trace("replace tiny template:" + matched);
         String[] varSections = matched.split("\\.");

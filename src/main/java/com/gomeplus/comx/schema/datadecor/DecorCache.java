@@ -32,11 +32,19 @@ public class DecorCache {
         this(key, ttlMs, withChildren, false);
     }
 
+    /**
+     * decorCache 并非主流程 实现稍后
+     * TODO  key 细节需要确认
+     * @param config
+     * @param context
+     * @param data
+     * @return
+     * @throws ConfigException
+     */
     public static DecorCache fromConf(Config config, Context context, Object data) throws ConfigException{
         if(config.rawData().isEmpty()) {
             return new NullDecorCache();
         }
-        // TODO 是否需要rstr
         TinyTemplate keyTpl = new TinyTemplate(config.rstr(DecorCache.FIELD_KEY));
         // TODO 添加 global 分支
         String prefix = context.getRequest().getUrl().getPath() + ":";

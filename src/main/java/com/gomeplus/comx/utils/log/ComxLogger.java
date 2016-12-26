@@ -25,10 +25,10 @@ public class ComxLogger {
     // TODO 实现。。
     public void log(String str, String level){
     }
-    public void trace(String str)   { this.logger.trace(str);}
-    public void debug(String str)   { this.logger.debug(str);}
-    public void info(String str)    { this.logger.info(str);}
-    public void warn(String str)    { this.logger.warn(str);}
-    public void error(String str)   { this.logger.error(str);}
+    public void trace(String str)   { logger.trace(str);}
+    public void debug(String str)   { logger.debug(str);}
+    public void info(String str)    { logger.info(str);}
+    public void warn(String str)    { logger.warn(str);}
+    public void error(String str)   { logger.error(str);}
 
 }

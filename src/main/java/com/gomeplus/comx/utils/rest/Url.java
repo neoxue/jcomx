@@ -22,11 +22,15 @@ public class Url implements ArrayAccessBase{
     protected String path;
     protected UrlQuery query;
 
-    public Url(String url) throws MalformedURLException, UnsupportedEncodingException{
+    public Url(String url) throws UrlException{
         this.url = url;
-        URL aURL = new URL(url);
-        query = new UrlQuery(aURL.getQuery());
-        path = aURL.getPath();
+        try {
+            URL aURL = new URL(url);
+            query = new UrlQuery(aURL.getQuery());
+            path = aURL.getPath();
+        }catch(Exception ex) {
+            throw new UrlException(ex.getMessage());
+        }
     }
 
     // implements interface

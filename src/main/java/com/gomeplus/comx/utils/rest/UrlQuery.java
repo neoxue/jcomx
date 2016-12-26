@@ -58,6 +58,10 @@ public class UrlQuery implements ArrayAccessBase{
         return parsedParameters.get(key);
     }
 
+    public HashMap<String, String> getParameters() {
+        return this.parsedParameters;
+    }
+
 
 
 

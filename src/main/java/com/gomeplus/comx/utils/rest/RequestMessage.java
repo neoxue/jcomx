@@ -2,38 +2,49 @@ package com.gomeplus.comx.utils.rest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gomeplus.comx.context.Context;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xue on 12/15/16.
  */
 public class RequestMessage implements ArrayAccessBase{
-    static final String METHOD_GET      = "get";
-    static final String METHOD_POST     = "post";
-    static final String METHOD_DELETE   = "delete";
-    static final String METHOD_PUT      = "put";
-    //static final ArrayList ACCEPTED_METHODS = new ArrayList([METHOD_PUT, METHOD_GET, METHOD_POST, METHOD_DELETE]);
-    //static final String[] ACCEPTED_METHODS = ["get", self::METHOD_GET, self::METHOD_POST, self::METHOD_DELETE];
-    //static final String ACCEPTED_METHODSs = [self::METHOD_PUT, self::METHOD_GET, self::METHOD_POST, self::METHOD_DELETE];
+    public static final String METHOD_GET      = "get";
+    public static final String METHOD_POST     = "post";
+    public static final String METHOD_DELETE   = "delete";
+    public static final String METHOD_PUT      = "put";
     static final String HEADER_FIELD_TRACE_ID           = "X-Gomeplus-Trace-Id";
     static final String HEADER_FIELD_X_FORWARDED_FOR    = "X-Forwarded-For";
     static final String QUERY_FIELD_TRACE_ID            = "traceId";
     static final String DEFAULT_TRACE_ID_PREFIX         = "COMX";
 
+    // TODO
     protected HashMap<String, String>   commonParameterHolder;
 
     protected Url                       url;
     protected String                    method;
-    protected JSONObject                data;
+    protected Map                       data;
     protected HashMap<String, String>   headerParameters;
     protected Integer                   timeout;
 
     // constructors;
     public RequestMessage() {
     }
+    public RequestMessage(Url url, String method, Map data, HashMap<String, String> headerParameters, Integer timeout) {
+        this.url                = url;
+        this.method             = method;
+        this.data               = data;
+        this.headerParameters   = headerParameters;
+        this.timeout            = timeout;
+    }
+
+
 
     // implements interface
+    // TODO containsKey 实现
     public boolean containsKey(Object key) {
         return true;
     }
@@ -46,8 +57,18 @@ public class RequestMessage implements ArrayAccessBase{
     }
 
 
-
-
+    /**
+     * 传入context 是为了日共日志功能， 类原则上可替换
+     * @param context 当前context
+     * @return
+     */
+    public ResponseMessage execute(Context context) throws IOException {
+        String requestData = null;
+        if (null != data) {
+            requestData = new JSONObject(data).toJSONString();
+        }
+        return ApacheClient.request(url, method, requestData, headerParameters, timeout);
+    }
 
 
 
@@ -79,11 +100,11 @@ public class RequestMessage implements ArrayAccessBase{
         this.method = method;
     }
 
-    public JSONObject getData() {
+    public Map getData() {
         return data;
     }
 
-    public void setData(JSONObject data) {
+    public void setData(Map data) {
         this.data = data;
     }
 

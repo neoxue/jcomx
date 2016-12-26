@@ -33,6 +33,7 @@ public class ResponseMessage {
 
 
     // constructors;
+    public ResponseMessage(){}
     public ResponseMessage(Object data, String message, String code, Object error) {
         this.data       = data;
         this.message    = message;

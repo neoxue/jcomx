@@ -3,6 +3,7 @@ package com.gomeplus.comx.context;
 import com.gomeplus.comx.utils.rest.RequestMessage;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.log.ComxLogger;
+import com.gomeplus.comx.utils.rest.ResponseMessage;
 
 
 /**
@@ -30,11 +31,13 @@ public class ContextBuilder {
         Context     context = new Context();
         User        user    = new User(request);
         ComxLogger  logger  = new ComxLogger();
+        ResponseMessage responseMessage = new ResponseMessage();
 
 
         context.setLogger(logger);
         context.setRequest(request);
         context.setUser(user);
+        context.setResponse(responseMessage);
 
         // TODO jsonp
         return context;
