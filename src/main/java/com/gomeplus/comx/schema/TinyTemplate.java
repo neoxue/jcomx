@@ -37,7 +37,7 @@ public class TinyTemplate {
             m.appendReplacement(sb, newTpl);
         }
         m.appendTail(sb);
-        context.getLogger().trace("tiny template end:" + sb);
+        context.getLogger().trace("Tiny template end:" + sb);
         return sb.toString();
     }
 
@@ -46,7 +46,7 @@ public class TinyTemplate {
     // 现在的做法是，令vars 以及之后每一层都 imlements Map;
     // fastjson JSONPath 可以考虑
     public String replace(String matched, Context context) {
-        context.getLogger().trace("replace tiny template:" + matched);
+        context.getLogger().trace("Tiny template replacing:" + matched);
         String[] varSections = matched.split("\\.");
         Object matchedValue = this.vars;
 
@@ -54,13 +54,13 @@ public class TinyTemplate {
             if (matchedValue instanceof Map) {
                 matchedValue = ((Map)matchedValue).get(key);
             } else {
-                context.getLogger().warn("replace tiny template failed: matched" + matchedValue + " varSection:" + key);
+                context.getLogger().warn("Tiny template failed: matched" + matchedValue + " varSection:" + key);
                 return "";
                 // TODO 确认行为，记录日志，抛出异常
                 //throw new TinyTemplateException("");
             }
         }
-        context.getLogger().trace("replace tiny template got:" + matchedValue.toString());
+        context.getLogger().trace("Tiny template got:" + matchedValue.toString());
         return matchedValue.toString();
     }
 }

@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.Schema;
 import com.gomeplus.comx.schema.SchemaLoader;
+import com.gomeplus.comx.schema.datadecor.DecorException;
 import com.gomeplus.comx.schema.datadecor.decors.AbstractDecor;
 import com.gomeplus.comx.schema.datadecor.DecorFactory;
 import com.gomeplus.comx.schema.datadecor.decors.UnknownDecorTypeException;
+import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.config.ConfigException;
 import com.gomeplus.comx.utils.rest.ResponseMessage;
 import com.gomeplus.comx.utils.rest.Url;
@@ -34,7 +36,10 @@ public class Handler {
         } catch (ConfigException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
-        } catch (UnknownDecorTypeException ex){
+        } catch (SourceException ex){
+            ex.printStackTrace();
+            context.getLogger().error(ex.getMessage());
+        } catch (DecorException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
         }

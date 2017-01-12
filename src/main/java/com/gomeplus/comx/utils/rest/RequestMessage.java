@@ -3,6 +3,12 @@ package com.gomeplus.comx.utils.rest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
+import com.gomeplus.comx.utils.rest.clients.ApacheHttpClient;
+import com.gomeplus.comx.utils.rest.clients.HttpClientX;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,18 +63,66 @@ public class RequestMessage implements ArrayAccessBase{
     }
 
 
+
+
+
+
+
+
     /**
-     * 传入context 是为了日共日志功能， 类原则上可替换
+     * 传入context 是为了日共日志功能
+     * 类原则上可替换
+     * 抛出异常还是由业务检查抛出异常？
      * @param context 当前context
-     * @return
+     * @return ResponseMessage
      */
     public ResponseMessage execute(Context context) throws IOException {
-        String requestData = null;
-        if (null != data) {
-            requestData = new JSONObject(data).toJSONString();
+        String targetUrl   = url.getUrl();
+        String requestData = (null != data)?new JSONObject(data).toJSONString():"";
+
+        // 执行 HttpClient request 函数
+        try {
+            HttpResponse httpResponse = ApacheHttpClient.request(targetUrl, method.toUpperCase(), requestData, headerParameters, timeout);
+            int status = httpResponse.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = httpResponse.getEntity();
+                String responseBody = (entity != null) ? EntityUtils.toString(entity) : null;
+                JSONObject responseBodyJson = JSON.parseObject(responseBody);
+                return new ResponseMessage(responseBodyJson.get("data"), responseBodyJson.get("message").toString(), status);
+            } else {
+                context.getLogger().error("loading http source :" + targetUrl + " error status code:" + status);
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            }
+        } catch (Exception ex) {
+            // TODO bizness exception
+            context.getLogger().error(ex.getMessage());
+            throw ex;
         }
-        return ApacheClient.request(url, method, requestData, headerParameters, timeout);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

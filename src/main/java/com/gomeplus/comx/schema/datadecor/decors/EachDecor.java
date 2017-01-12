@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.gomeplus.comx.context.Context;
+import com.gomeplus.comx.schema.datadecor.DecorException;
 import com.gomeplus.comx.source.Source;
+import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 
@@ -31,7 +33,7 @@ public class EachDecor extends AbstractDecor {
 
 
 
-    public void doDecorate(Object data, Context context) throws ConfigException, Exception{
+    public void doDecorate(Object data, Context context) throws ConfigException, SourceException{
         ArrayList matchedNodes = this.getMatchedNodes(data, context);
         source = new Source(conf.rsub(EachDecor.FIELD_SOURCE));
         field  = conf.str(EachDecor.FIELD_FIELD,  "");
@@ -63,7 +65,7 @@ public class EachDecor extends AbstractDecor {
                 return new ArrayList(Arrays.asList(matchedNode));
             }
         } catch(Exception ex){
-            context.getLogger().warn("decor eachdecor, refJsonPath error, refJsonPath:"+ refJsonPath+ ", data:" + data);
+            context.getLogger().warn("Decor Eachdecor, refJsonPath error, refJsonPath:"+ refJsonPath+ ", data:" + data);
             return new ArrayList(Arrays.asList(data));
         }
     }
@@ -74,7 +76,7 @@ public class EachDecor extends AbstractDecor {
      * @param data
      * @param context
      */
-    public void decorateOneNode(Object ref, Object data, Context context) throws ConfigException, Exception{
+    public void decorateOneNode(Object ref, Object data, Context context) throws ConfigException, SourceException{
         HashMap<String, Object> vars = new HashMap<>();
         vars.put("ref", ref);
         vars.put("data", data);

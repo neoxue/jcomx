@@ -4,7 +4,6 @@ package com.gomeplus.comx.boot.server;
  * Created by xue on 12/25/16.
  */
 
-/*
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -20,7 +19,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 public final class ComxNettyHttpServer {
 
     static final boolean SSL = System.getProperty("ssl") != null;
-    static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
+    static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8889"));
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.
@@ -41,7 +40,7 @@ public final class ComxNettyHttpServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new HttpHelloWorldServerInitializer(sslCtx));
+                    .childHandler(new ComxNettyHttpServerInitializer(sslCtx));
 
             Channel ch = b.bind(PORT).sync().channel();
 
@@ -55,4 +54,3 @@ public final class ComxNettyHttpServer {
         }
     }
 }
-*/

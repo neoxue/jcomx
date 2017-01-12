@@ -5,16 +5,21 @@ import com.gomeplus.comx.utils.rest.ResponseMessage;
 import com.gomeplus.comx.schema.Schema;
 import com.gomeplus.comx.utils.log.ComxLogger;
 
+import java.util.HashMap;
+
 
 /**
  * Created by xue on 12/16/16.
  */
 public class Context {
-    private Schema          schema;
-    private RequestMessage  request;
-    private User            user;
-    private ResponseMessage response;
-    private ComxLogger      logger;
+    private Schema                  schema;
+    private RequestMessage          request;
+    private User                    user;
+    private ResponseMessage         response;
+    private ComxLogger              logger;
+    private ContextCache            cache;
+    private HashMap<String, Object> localCache = new HashMap<>();
+    private Boolean                 localCacheEnabled = false;
 
 
 
@@ -22,10 +27,7 @@ public class Context {
     private String          traceId;
     // 记录各资源请求
     private Integer         count = 0;
-    // TODO init cache;
     // 先不处理
-    //private Cache cache;
-    // localCache 是否有必要注册在 Context 需要考虑
     //private ScriptLoader scriptLoader;
 
 
@@ -40,7 +42,39 @@ public class Context {
 
 
 
+
+
+
+
+
+
+
     // getter and setter
+    public Boolean getLocalCacheEnabled() {
+        return localCacheEnabled;
+    }
+
+    public void setLocalCacheEnabled(Boolean localCacheEnabled) {
+        this.localCacheEnabled = localCacheEnabled;
+    }
+
+    public HashMap<String, Object> getLocalCache() {
+        return localCache;
+    }
+
+    public void setLocalCache(HashMap<String, Object> localCache) {
+        this.localCache = localCache;
+    }
+
+
+    public ContextCache getCache() {
+        return cache;
+    }
+
+    public void setCache(ContextCache cache) {
+        this.cache = cache;
+    }
+
     public ResponseMessage getResponse() {
         return response;
     }

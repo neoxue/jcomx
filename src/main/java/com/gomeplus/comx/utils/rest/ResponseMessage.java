@@ -14,10 +14,10 @@ public class ResponseMessage {
     private Object    error;
     private JSONArray debug;
 
-    private String message;
-    private String code;
-    private String dataType;
-    private String callback;
+    private String  message;
+    private Integer code;
+    private String  dataType;
+    private String  callback;
 
     static final String FIELD_DEBUG                 = "debug";
     static final String FIELD_MESSAGE               = "message";
@@ -34,13 +34,13 @@ public class ResponseMessage {
 
     // constructors;
     public ResponseMessage(){}
-    public ResponseMessage(Object data, String message, String code, Object error) {
+    public ResponseMessage(Object data, String message, Integer code, Object error) {
         this.data       = data;
         this.message    = message;
         this.code       = code;
         this.error      = error;
     }
-    public ResponseMessage(Object data, String message, String code) {
+    public ResponseMessage(Object data, String message, Integer code) {
         this.data       = data;
         this.message    = message;
         this.code       = code;
@@ -105,11 +105,11 @@ public class ResponseMessage {
         this.message = message;
     }
 
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 

@@ -5,16 +5,25 @@ package com.gomeplus.comx.boot.server;
  */
 
 
-/*
+import com.alibaba.fastjson.JSONObject;
+import com.gomeplus.comx.boot.BootStrap;
+import com.gomeplus.comx.utils.rest.RequestMessage;
+import com.gomeplus.comx.utils.rest.ResponseMessage;
+import com.gomeplus.comx.utils.rest.Url;
+import com.gomeplus.comx.utils.rest.UrlException;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.DecoderResult;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.util.AsciiString;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
 
@@ -32,15 +41,45 @@ public class ComxNettyServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws UrlException{
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
             if (HttpUtil.is100ContinueExpected(req)) {
                 ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
             }
+
+            String url = req.uri();
+            String method = req.method().name();
+            HttpHeaders httpHeaders = req.headers();
+            List<Map.Entry<String, String>> headerNames = httpHeaders.entries();
+            HashMap<String, String> headerParameters = new HashMap<>();
+            for (Map.Entry<String, String> entry: headerNames) {
+                headerParameters.put(entry.getKey(), entry.getValue());
+            }
+            // TODO 优化 读 body
+            JSONObject data = new JSONObject();
+            RequestMessage requestMessage = new RequestMessage();
+            requestMessage.setMethod(method);
+            url = "http://127.0.0.1:8889" + url;
+            Url rurl = new Url(url);
+            requestMessage.setUrl(rurl);
+            requestMessage.setData(data);
+            requestMessage.setHeaderParameters(headerParameters);
+
+
+            ResponseMessage responseMessage = BootStrap.start(requestMessage);
+
+
+
+
+
+
+
+
             boolean keepAlive = HttpUtil.isKeepAlive(req);
-            FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(CONTENT));
+            //FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(CONTENT));
+            FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(responseMessage.send().getBytes()));
             response.headers().set(CONTENT_TYPE, "text/plain");
             response.headers().setInt(CONTENT_LENGTH, response.content().readableBytes());
 
@@ -60,4 +99,3 @@ public class ComxNettyServerHandler extends ChannelInboundHandlerAdapter {
     }
 }
 
-*/

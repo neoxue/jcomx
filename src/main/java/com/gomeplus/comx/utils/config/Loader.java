@@ -27,7 +27,7 @@ public class Loader {
             byte[] data = Files.readAllBytes(Paths.get(fileName));
             jsonString = new String(data);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             throw new ConfigException("failed to read json file:" + fileName);
         }
         return fromJson(jsonString);
@@ -43,7 +43,7 @@ public class Loader {
             JSONObject data = JSON.parseObject(jsonString);
             return new Config(data);
         }catch (JSONException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             throw new ConfigException("bad format json");
         }
     }

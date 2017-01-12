@@ -33,53 +33,72 @@ public class Config {
      * @return String
      */
     public String str(String key, String defaultValue){
-        if (!(dataObject.containsKey(key))) return defaultValue;
-        return dataObject.get(key).toString();
+        try {
+            return rstr(key);
+        }catch (ConfigException ex) {
+            return defaultValue;
+        }
     }
     public String rstr(String key) throws ConfigException{
-        String rvalue = "";
-        if (dataObject.containsKey(key)) {
-            rvalue = this.str(key, null);
-        }
-        if (rvalue == null) {
-            throw new ConfigException("get rstr failed. key:"+ key + " config.dataObject:"+ dataObject);
-        }
-        return rvalue;
+        if (!dataObject.containsKey(key)) throw new ConfigException("Config get rstr failed. key:"+ key + " config.dataObject:"+ dataObject);
+        Object value = dataObject.get(key);
+        if (value instanceof Boolean) return value.toString();
+        if (value instanceof Integer) return value.toString();
+        if (value instanceof String)  return value.toString();
+        throw new ConfigException("Config get String type error. key:" + key + " config.dataObject:" + dataObject);
     }
 
 
 
 
-    //public boolean bool(String key) {
-    //    return bool(key, false);
-    //}
-    public boolean bool(String key, boolean defaultValue) throws ConfigException{
-        if (!dataObject.containsKey(key)) return defaultValue;
-        Object value = dataObject.get(key);
-        if (value instanceof Boolean) { return (Boolean)value;}
-        if (value instanceof Integer) { return !(value.equals(0));}
-        if (value instanceof String)  {
-            if (value.equals("false")) return false;
-            else return true;
+
+
+
+
+
+
+
+
+
+
+    public boolean bool(String key, boolean defaultValue) {
+        try {
+            return rbool(key);
+        } catch (ConfigException ex){
+            return defaultValue;
         }
-        throw new ConfigException("get boolean type error. key:" + key + " config.dataObject:" + dataObject);
     }
 
-    public Integer intvalue(String key, Integer defaultValue) throws ConfigException{
-        if (!dataObject.containsKey(key)) return defaultValue;
+    public boolean rbool(String key) throws ConfigException{
+        if (!dataObject.containsKey(key)) throw new ConfigException("Config get Boolean type error. key:" + key + " config.dataObject:" + dataObject);
         Object value = dataObject.get(key);
-        if (value instanceof Boolean) { return (Integer)value;}
-        if (value instanceof Integer) { return (Integer)value;}
-        if (value instanceof String)  {
-            return Integer.parseInt((String)value);
+        if (value instanceof Boolean) return (Boolean)value;
+        if (value instanceof Integer) return !(value.equals(0));
+        if (value instanceof String)  return !(value.equals("false"));
+        throw new ConfigException("Config get Boolean type error. key:" + key + " config.dataObject:" + dataObject);
+    }
+
+    public Integer intvalue(String key, Integer defaultValue){
+        try {
+            return rintvalue(key);
+        } catch (ConfigException ex){
+            return defaultValue;
         }
-        throw new ConfigException("get Integer type error. key:" + key + " config.dataObject:" + dataObject);
     }
 
     public Integer rintvalue(String key) throws ConfigException{
-        Integer value = this.intvalue(key, null);
-        if (value == null) throw new ConfigException("get Integer type error. key:" + key + "config.dataObject:" + dataObject);
-        return value;
+        if (!dataObject.containsKey(key)) throw new ConfigException("Config get Integer type error. key:" + key + "config.dataObject:" + dataObject);
+        Object value = dataObject.get(key);
+        if (value instanceof Boolean) return ((Boolean)value)?1:0;
+        if (value instanceof Integer) return (Integer)value;
+        if (value instanceof String)  {
+            try {
+                return Integer.parseInt((String) value);
+            } catch (NumberFormatException ex) {
+                throw new ConfigException("Config get Integer type error(converting string to integer). key:" + key + " config.dataObject:" + dataObject);
+            }
+        }
+        throw new ConfigException("Config get Integer type error. key:" + key + " config.dataObject:" + dataObject);
     }
 
 
@@ -131,7 +150,7 @@ public class Config {
             }
             return new Config(tdataObject);
         }
-        throw new ConfigException("type error, expects array or object. FIELD[" + key + "]");
+        throw new ConfigException("type error, expects array or object. FIELD[" + key + "]" + "found: " + arr);
     }
 
 

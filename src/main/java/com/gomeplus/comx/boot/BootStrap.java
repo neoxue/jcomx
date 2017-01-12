@@ -33,7 +33,7 @@ public class BootStrap {
             // 构建初始环境异常 打印日志，返回服务不可用
             ex.printStackTrace();
             // 是否针对 jsonp 做特殊处理
-            return new ResponseMessage(null, ex.getMessage(),"500");
+            return new ResponseMessage(null, ex.getMessage(),500);
         }
 
         return context.getResponse();

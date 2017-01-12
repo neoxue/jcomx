@@ -1,5 +1,6 @@
 package com.gomeplus.comx.context;
 
+import com.gomeplus.comx.boot.ComxConfLoader;
 import com.gomeplus.comx.utils.rest.RequestMessage;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.log.ComxLogger;
@@ -28,18 +29,21 @@ public class ContextBuilder {
     // TODO cache init;
     // TODO traceId;
     public Context build () {
-        Context     context = new Context();
-        User        user    = new User(request);
-        ComxLogger  logger  = new ComxLogger();
+        Context      context = new Context();
+        User         user    = new User(request);
+        ContextCache cache   = new ContextCache(ComxConfLoader.getCache(), "1".equals(request.getUrl().getQuery().get("__refresh")));
+        ComxLogger   logger  = new ComxLogger();
         ResponseMessage responseMessage = new ResponseMessage();
 
 
         context.setLogger(logger);
         context.setRequest(request);
         context.setUser(user);
+        context.setCache(cache);
         context.setResponse(responseMessage);
 
         // TODO jsonp
+        // 在外部
         return context;
     }
 

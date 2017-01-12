@@ -13,7 +13,7 @@
         <jackson-core-version>2.8.5</jackson-core-version>
         -->
         <nettygroup>io.netty</nettygroup>
-        <nettyversion>4.1.6.final</nettyversion>
+        <nettyversion>4.1.6.Final</nettyversion>
     </properties>
     <dependencies>
 
@@ -118,10 +118,6 @@
             <artifactId>netty-codec-stomp</artifactId>
             <version>${nettyversion}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
         <!--
         <dependency>
             <groupId>io.netty</groupId>
@@ -153,13 +149,22 @@
 
         <!-- end io utils -->
 
+        <!-- jedis -->
+        <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <!-- end jedis -->
 
 
 
 
 
 
-        <!-- groovy test-->
+
+        <!-- groovy and test-->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
@@ -176,6 +181,7 @@
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <!-- end groovy and test-->
 
 
     </dependencies>

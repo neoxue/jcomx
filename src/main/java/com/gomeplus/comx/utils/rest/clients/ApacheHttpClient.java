@@ -1,12 +1,16 @@
-package com.gomeplus.comx.utils.rest;
+package com.gomeplus.comx.utils.rest.clients;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gomeplus.comx.utils.rest.ResponseMessage;
+import com.gomeplus.comx.utils.rest.Url;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -17,18 +21,28 @@ import java.util.HashMap;
 /**
  * Created by xue on 12/24/16.
  * TODO 简单编写，待优化
+ // TODO 记录日志 或在外层
  */
-public class ApacheClient {
-    public static ResponseMessage request(Url url, String method, String requestData, HashMap<String, String> headers, Integer timeout) throws IOException {
-        // TODO 记录日志 或在外层
+public class ApacheHttpClient implements HttpClientX {
+    public static HttpResponse request(String url, String method, String requestData, HashMap<String, String> headers, Integer timeout) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpUriRequest httpUriRequest = RequestBuilder.create(method).setUri(url).build();
+        // set header;
+        return httpclient.execute(httpUriRequest);
+    }
 
+
+
+
+    public static ResponseMessage request(Url url, String method, String requestData, HashMap<String, String> headers, Integer timeout, String a) throws IOException {
+
+        CloseableHttpClient httpclient = HttpClients.createDefault();
 
         String target = url.getUrl();
         String responseBody = "";
 
         // 暂时只最简单请求
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpget = new HttpGet(target);
 
@@ -58,7 +72,7 @@ public class ApacheClient {
         }
 
         JSONObject responseBodyJson = JSON.parseObject(responseBody);
-        return new ResponseMessage(responseBodyJson.get("data"), responseBodyJson.get("message").toString(), "200");
+        return new ResponseMessage(responseBodyJson.get("data"), responseBodyJson.get("message").toString(), 200);
 
 
 

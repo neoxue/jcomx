@@ -3,6 +3,7 @@ package com.gomeplus.comx.source;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.TinyTemplate;
+import com.gomeplus.comx.schema.onError.Strategy;
 import com.gomeplus.comx.source.sourcebase.AbstractSourceBase;
 import com.gomeplus.comx.source.sourcebase.SourceBaseFactory;
 import com.gomeplus.comx.source.sourcebase.UnmatchedRequestMethodException;
@@ -11,6 +12,8 @@ import com.gomeplus.comx.utils.config.ConfigException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by xue on 12/22/16.
@@ -19,8 +22,6 @@ public class Source {
     static final Integer DEFAULT_TIMEOUT            = 8000;
     static final String FIELD_TIMEOUT               = "timeout";
     static final String FIELD_BASE                  = "base";
-    static final String FIELD_CACHE                 = "cache";
-    static final String RESERVED_TPL_VAR_REQUEST    = "request";
     static final String FIELD_FIRST_ENTRY_ONLY      = "firstEntryOnly";
     static final String FIELD_JSON_PATH             = "jsonPath";
     static final String FIELD_ON_ERROR              = "onError";
@@ -28,37 +29,54 @@ public class Source {
 
     public static final String FIELD_URI            = "uri";
     public static final String FIELD_METHOD         = "method";
+    public static final String RESERVED_RENDERED_URI= "reserved_rendered_uri";
+    static final String RESERVED_TPL_VAR_REQUEST    = "request";
 
-    Config conf;
-    public Source(Config conf){
-        this.conf = conf;
-    }
+
+
+    static final String FIELD_CACHE                 = "cache";
+    static final String SOURCE_CACHE_KEY_PREFIX     = "Source:";
+    static final String SOURCE_CACHE_TTL            = "ttl:";
+    static final String SOURCE_CACHE_KEY            = "key";
+    static final Integer SOURCE_CACHE_TTL_DEFAULT   = 300;
 
     /**
-     * loadData
-     * @param context
-     * @param reservedVariables
-     * @return
+     * source 是一个对应的source 实例， 提供loadData 返回 Map Object;(或非Map)
+     * 它将使用 sourcebase sourceCache localCache 三类资源
+     * 同一个source 应对refJsonPath 不同情况下拥有不同运行结果，所以不能是object 属性
+     * 不拥有变量 reservedVariables
+     * renderedUri 会随着 reservedVariables 变化而不断变化
+     * 一个source 是一个最小单位，所以可以直接在variables 添加renderedUri
      */
-    public Object loadData(Context context, HashMap<String, Object> reservedVariables) throws ConfigException, Exception{
+    private     Config                    conf;
+    public      Source(Config conf) { this.conf = conf;}
+
+    /**
+     * loadData 外层 记录日志
+     * @param context   context
+     * @param reservedVariables {ref|request|data|renderedUri} TODO renderedUri 是否在这里存疑
+     * @return Object data
+     */
+    public Object loadData(Context context, HashMap<String, Object> reservedVariables) throws ConfigException, SourceException{
         // since redis operation, choose nanotime; 1E-9
-        long time0      = System.nanoTime();
-        Object result   = null;
-        Exception ex    = null;
+        long        time0   = System.nanoTime();
+        Object      result  = null;
+        Exception   ex      = null;
+
+        context.getLogger().debug("Source loading URI:" + this.getUri());
         try {
-            result = this.doLoadData(context, reservedVariables);
+            result           = doLoadData(context, reservedVariables);
+            double deltaTime = (System.nanoTime() - time0) * 1.0 / 1000_000_000;
+            context.getLogger().debug("Source loading used:" + deltaTime + " sec, URI:" + this.getUri());
         } catch (Exception ex0){
-            context.getLogger().error("source loading error, ex:" + ex0.getMessage() +  " URI:" + this.getUri());
             ex = ex0;
         }
-        double deltaTime = (System.nanoTime() - time0) * 1.0 / 1000_000_000;
-        context.getLogger().debug("source loading used:" + deltaTime + " sec, URI:" + this.getUri());
 
         if (result != null) return result;
         Config backupConf = conf.sub(Source.FIELD_BACKUP);
         if (backupConf.rawData().isEmpty()) {
-            context.getLogger().error("source loading error, null return and backupConf empty; URI:" + this.getUri());
-            if (ex != null)     throw ex;
+            context.getLogger().error("Source loading backupConf empty; URI:" + this.getUri());
+            if (ex != null)     throw new SourceException(ex.getMessage());
             return null;
         }
         Source backSource = new Source(backupConf);
@@ -66,44 +84,98 @@ public class Source {
     }
 
 
-    public Object doLoadData(Context context, HashMap<String, Object> reservedVariables) throws ConfigException, IOException, UnmatchedRequestMethodException{
+    // TODO 确认 cache 中是否可以自设置 key
+    // cache 包含key 都是属于 decorcache
+    // TODO 再次确认 request 是否可以放在外层
+    private Object doLoadData(Context context, HashMap<String, Object> reservedVariables) throws  IOException, UnmatchedRequestMethodException, Exception{
         try {
-            HashMap tplParams = (HashMap) reservedVariables.clone();
-            tplParams.put(Source.RESERVED_TPL_VAR_REQUEST, context.getRequest());
+            String uri          = getUri();
+            TinyTemplate tpl    = new TinyTemplate(uri);
+            reservedVariables.put(RESERVED_TPL_VAR_REQUEST, context.getRequest());
+            String renderedUri  = tpl.render(reservedVariables, context);
+            reservedVariables.put(RESERVED_RENDERED_URI, renderedUri);
 
-            String uri = getUri();
-            Config cacheConf = conf.sub(Source.FIELD_CACHE);
-            TinyTemplate tpl = new TinyTemplate(uri);
-            String renderedUri = tpl.render(tplParams, context);
-
-            // localcache 部分 TODO
-            // SourceCache 部分 (主分支) TODO
-
-            Object data = this.getBase(context).executeLoading(context, conf, tplParams);
-            // cache sets
+            Object data = loadCache(context, renderedUri);
+            if (data == null) {
+                data = getBase(context).executeLoading(context, conf, reservedVariables);
+                setCache(context, renderedUri, data);
+            }
 
             String jsonPath = conf.str(FIELD_JSON_PATH, "");
-            if (jsonPath.isEmpty()) {
-                return data;
-            }
-            return extractDataWithJsonPath(data);
+            if (!jsonPath.isEmpty()) return this.extractDataWithJsonPath(data);
+            return data;
         } catch (Exception ex) {
-            context.getLogger().error(ex.getMessage());
-            // TODO strategy on error;
-            return new JSONObject();
+            context.getLogger().error("Source loading doLoadData error:" + ex.getMessage() + "; " + ex.getClass());
+            //TODO 记录详细日志 方式
+            ex.printStackTrace();
+            return Strategy.fromConf(conf.sub(FIELD_ON_ERROR)).handleSourceException(ex, context);
         }
-
     }
 
-    public String getUri() throws ConfigException{
-        return conf.rstr(Source.FIELD_URI);
-    }
 
 
     public AbstractSourceBase getBase(Context context) throws ConfigException{
         String baseId = conf.rstr(Source.FIELD_BASE);
         return SourceBaseFactory.getSourceBase(baseId);
     }
+
+    private Object loadCache(Context context, String renderedUri) throws ConfigException{
+        // localcache 部分
+        String localCacheKey = this.getBase(context).getId() + ":" + renderedUri;
+        if (context.getLocalCacheEnabled() && context.getLocalCache().containsKey(localCacheKey)) {
+            return context.getLocalCache().get(localCacheKey);
+        }
+        // sourcecache 部分
+        try {
+            Config cacheConf = conf.sub(FIELD_CACHE);
+            if (cacheConf.rawData().isEmpty()) return null;
+            return context.getCache().getMapObject(SOURCE_CACHE_KEY_PREFIX + renderedUri);
+        } catch (Exception ex) {
+            // get cache 失败不影响流程继续进行， 但应加入日志
+            context.getLogger().error("Source loading: getCache error:" + ex.getMessage() + "; " + ex.getClass());
+            // TODO 是否如此记录
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    private void setCache(Context context, String renderedUri, Object data) throws ConfigException {
+        // localcache 部分
+        String localCacheKey = this.getBase(context).getId() + ":" + renderedUri;
+        if (context.getLocalCacheEnabled()) context.getLocalCache().put(localCacheKey, data);
+        // sourcecache 部分
+        try {
+            Config cacheConf = conf.sub(FIELD_CACHE);
+            if (cacheConf.rawData().isEmpty()) return;
+            Integer ttl = cacheConf.intvalue(SOURCE_CACHE_TTL, SOURCE_CACHE_TTL_DEFAULT);
+            if (data instanceof Map) {
+                context.getCache().setMapObject(SOURCE_CACHE_KEY_PREFIX + renderedUri, (Map) data, ttl);
+            } else {
+                context.getCache().set(SOURCE_CACHE_KEY_PREFIX + renderedUri, data.toString(), ttl);
+            }
+        } catch (Exception ex) {
+            // set cache 失败不影响流程继续进行， 但应加入日志
+            context.getLogger().error("Source loading: setCache error:" + ex.getMessage() + "; " + ex.getClass());
+            // TODO 是否如此记录
+            ex.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // TODO 逻辑补写
     public Object extractDataWithJsonPath(Object data) {
@@ -115,5 +187,8 @@ public class Source {
 
 
 
+    public String getUri() throws ConfigException{
+        return conf.rstr(Source.FIELD_URI);
+    }
 
 }

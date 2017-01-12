@@ -5,7 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.ConfBaseNode;
 import com.gomeplus.comx.schema.datadecor.DecorCache;
+import com.gomeplus.comx.schema.datadecor.DecorException;
 import com.gomeplus.comx.schema.datadecor.DecorFactory;
+import com.gomeplus.comx.schema.onError.Strategy;
+import com.gomeplus.comx.schema.onError.StrategyException;
+import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 
@@ -40,16 +44,21 @@ public abstract class AbstractDecor extends ConfBaseNode{
     public AbstractDecor(Config conf){
         super(conf);
     }
-    abstract public void doDecorate(Object data, Context context) throws ConfigException, Exception;
+    abstract public void doDecorate(Object data, Context context) throws ConfigException, SourceException;
     abstract public String getType();
 
 
 
-
-
-
-    public void decorate(Object data, Context context){
-        // TODO localcache enable
+    /**
+     * 抛出3类错误 1, ConfigException 2, SourceException 3, DecorException
+     * @param data
+     * @param context
+     * @throws ConfigException
+     * @throws SourceException
+     */
+    public void decorate(Object data, Context context) throws ConfigException, SourceException, DecorException {
+        // localcache default: disabled
+        context.setLocalCacheEnabled(conf.bool(FIELD_LOCAL_CACHE_ENABLED, false));
 
         // TODO 记录更多decor conf 信息
         context.getLogger().debug("Execute Decor:"+ this.getType());
@@ -64,14 +73,12 @@ public abstract class AbstractDecor extends ConfBaseNode{
             this.executeChildDecors(data, context);
             // TODO decorCache set after children;
         } catch(Exception ex) {
-            context.getLogger().error("decorate error:" + ex.getMessage());
-            ex.printStackTrace();
-            // TODO onError 流程
-            // TODO 对于ConfigException 需要直接抛出？
-            // TODO UnknownDecorTypeException
+            context.getLogger().error("Decorate error:" + ex.getMessage() + "; class:" + ex.getClass());
+            Strategy.fromConf(conf.sub("onError")).handleDecorException(ex, context, data);
         }
-
     }
+
+
     // precondition node; 是否在beforeDecorate 考虑
     public void beforeDecorate(Object data, Context context){
     }
@@ -84,10 +91,10 @@ public abstract class AbstractDecor extends ConfBaseNode{
 
 
     // TODO 写法变更
-    public void executeChildDecors(Object data, Context context) throws ConfigException,UnknownDecorTypeException{
+    public void executeChildDecors(Object data, Context context) throws ConfigException, SourceException, DecorException{
         this.sequentialExecuteChildDecors(data, context);
     }
-    public void sequentialExecuteChildDecors(Object data, Context context) throws ConfigException,UnknownDecorTypeException{
+    public void sequentialExecuteChildDecors(Object data, Context context) throws ConfigException, SourceException, DecorException{
         Config children = conf.sub(AbstractDecor.FIELD_DECORS);
         Set<String> keys = children.keys();
         for(String key: keys){
