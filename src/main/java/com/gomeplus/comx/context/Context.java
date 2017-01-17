@@ -23,9 +23,14 @@ public class Context {
 
 
 
-    private String          UrlPrefix;
+    @Deprecated
+    private String          urlPrefix;
+
+
     private String          traceId;
     // 记录各资源请求
+    // 似乎可以是个结构体来记录
+    // 或者redis count http count ...?
     private Integer         count = 0;
     // 先不处理
     //private ScriptLoader scriptLoader;
@@ -44,6 +49,10 @@ public class Context {
 
 
 
+    @Override
+    public Context clone() throws CloneNotSupportedException {
+        return (Context) super.clone();
+    }
 
 
 
@@ -91,12 +100,14 @@ public class Context {
         this.logger = logger;
     }
 
+    @Deprecated
     public String getUrlPrefix() {
-        return UrlPrefix;
+        return urlPrefix;
     }
 
+    @Deprecated
     public void setUrlPrefix(String urlPrefix) {
-        UrlPrefix = urlPrefix;
+        this.urlPrefix = urlPrefix;
     }
 
     public String getTraceId() {

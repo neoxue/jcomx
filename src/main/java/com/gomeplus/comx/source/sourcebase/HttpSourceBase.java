@@ -16,6 +16,7 @@ public class HttpSourceBase extends AbstractRequestBasedSourceBase{
     public HttpSourceBase(Config conf){super(conf);}
 
     protected Object doRequest(RequestMessage request, Context context) throws IOException{
+        // TODO 处理请求前数据
         // 处理 traceId
         // 处理 X-Forwarded-For
 

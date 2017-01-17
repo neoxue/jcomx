@@ -76,7 +76,7 @@ public class Source {
         Config backupConf = conf.sub(Source.FIELD_BACKUP);
         if (backupConf.rawData().isEmpty()) {
             context.getLogger().error("Source loading backupConf empty; URI:" + this.getUri());
-            if (ex != null)     throw new SourceException(ex.getMessage());
+            if (ex != null)     throw new SourceException(ex);
             return null;
         }
         Source backSource = new Source(backupConf);
@@ -115,10 +115,11 @@ public class Source {
 
 
     public AbstractSourceBase getBase(Context context) throws ConfigException{
-        String baseId = conf.rstr(Source.FIELD_BASE);
+        String baseId = conf.str(Source.FIELD_BASE, "default");
         return SourceBaseFactory.getSourceBase(baseId);
     }
 
+    // get cache 失败不影响流程继续进行， 但应加入日志
     private Object loadCache(Context context, String renderedUri) throws ConfigException{
         // localcache 部分
         String localCacheKey = this.getBase(context).getId() + ":" + renderedUri;
@@ -131,7 +132,6 @@ public class Source {
             if (cacheConf.rawData().isEmpty()) return null;
             return context.getCache().getMapObject(SOURCE_CACHE_KEY_PREFIX + renderedUri);
         } catch (Exception ex) {
-            // get cache 失败不影响流程继续进行， 但应加入日志
             context.getLogger().error("Source loading: getCache error:" + ex.getMessage() + "; " + ex.getClass());
             // TODO 是否如此记录
             ex.printStackTrace();
@@ -139,22 +139,24 @@ public class Source {
         }
     }
 
+    // set cache 失败不影响流程继续进行， 但应加入日志
     private void setCache(Context context, String renderedUri, Object data) throws ConfigException {
         // localcache 部分
         String localCacheKey = this.getBase(context).getId() + ":" + renderedUri;
         if (context.getLocalCacheEnabled()) context.getLocalCache().put(localCacheKey, data);
         // sourcecache 部分
         try {
+            String key = SOURCE_CACHE_KEY_PREFIX + renderedUri;
+            context.getLogger().trace("Source loading: setCache key:" + key);
             Config cacheConf = conf.sub(FIELD_CACHE);
             if (cacheConf.rawData().isEmpty()) return;
             Integer ttl = cacheConf.intvalue(SOURCE_CACHE_TTL, SOURCE_CACHE_TTL_DEFAULT);
             if (data instanceof Map) {
-                context.getCache().setMapObject(SOURCE_CACHE_KEY_PREFIX + renderedUri, (Map) data, ttl);
+                context.getCache().setMapObject(key, (Map) data, ttl);
             } else {
-                context.getCache().set(SOURCE_CACHE_KEY_PREFIX + renderedUri, data.toString(), ttl);
+                context.getCache().set(key, data.toString(), ttl);
             }
         } catch (Exception ex) {
-            // set cache 失败不影响流程继续进行， 但应加入日志
             context.getLogger().error("Source loading: setCache error:" + ex.getMessage() + "; " + ex.getClass());
             // TODO 是否如此记录
             ex.printStackTrace();

@@ -17,12 +17,18 @@ public class ComxConfLoader {
     private static Config comxConf;
     private static SourceBaseFactory sourceBaseFactory;
     private static AbstractCache cache;
+    private static String urlPrefix;
+
+
+
+    private static final String FIELD_URL_PREFIX    = "urlPrefix";
+    private static final String FIELD_CACHE         = "cache";
 
 
 
     // synchronized TODO
     // 提供更新方法 TODO
-    public static Config load()  throws ConfigException, UnknownSourceBaseTypeException{
+    public static Config load()  throws ConfigException{
         if (!initialized) {
             initialize();
         }
@@ -34,7 +40,8 @@ public class ComxConfLoader {
         String comxConfFile = COMX_HOME + "/comx.conf.json";
         comxConf            = com.gomeplus.comx.utils.config.Loader.fromJsonFile(comxConfFile);
         sourceBaseFactory   = SourceBaseFactory.fromConf(comxConf);
-        Config cacheConf    = comxConf.sub("cache");
+        urlPrefix           = comxConf.rstr(FIELD_URL_PREFIX);
+        Config cacheConf    = comxConf.sub(FIELD_CACHE);
         cache               = CacheFactory.fromConf(cacheConf);
         initialized         = true;
     }
@@ -44,7 +51,9 @@ public class ComxConfLoader {
 
 
 
-
+    public static String getUrlPrefix() {
+        return urlPrefix;
+    }
 
     public static AbstractCache getCache() {return cache;}
 

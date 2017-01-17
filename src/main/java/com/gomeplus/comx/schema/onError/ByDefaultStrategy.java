@@ -18,14 +18,14 @@ public class ByDefaultStrategy extends Strategy {
 
     @Override
     public Object handleSourceException(Exception ex, Context context) throws Exception{
-        context.getLogger().error("ByDefault Strategy, caught exception, return value by default. error:" + ex.getMessage() + "; class:" + ex.getClass());
+        context.getLogger().error("OnError ByDefault Strategy, caught exception, return value by default. error:" + ex.getMessage() + "; class:" + ex.getClass());
         return this.conf.sub(DEFAULT_VALUE_FIELD).rawData();
     }
 
     @Override
     public Object handleDecorException(Exception ex, Context context, Object data) throws ConfigException{
-        context.getLogger().error("ByDefault Strategy, caught exception, and throw exception. error:" + ex.getMessage() + "; class:" + ex.getClass());
-        throw new StrategyException("onError strategy 'ByDefault' is not available on Decor node");
+        context.getLogger().error("OnError ByDefault Strategy, caught exception, and throw exception. error:" + ex.getMessage() + "; class:" + ex.getClass());
+        throw new StrategyException("OnError strategy 'ByDefault' is not available on Decor node");
     }
 }
 

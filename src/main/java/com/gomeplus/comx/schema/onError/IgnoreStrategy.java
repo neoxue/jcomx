@@ -14,13 +14,13 @@ public class IgnoreStrategy extends Strategy {
 
     @Override
     public Object handleSourceException(Exception ex, Context context) {
-        context.getLogger().error("OnError Strategy,source exception:" + ex.getMessage() + "; class:" + ex.getClass());
+        context.getLogger().error("OnError IgnoreStrategy,source exception:" + ex.getMessage() + "; class:" + ex.getClass());
         return null;
     }
 
     @Override
     public Object handleDecorException(Exception ex, Context context, Object data) {
-        context.getLogger().error("OnError Strategy,decor exception:" + ex.getMessage() + "; class:" + ex.getClass());
+        context.getLogger().error("OnError IgnoreStrategy,decor exception:" + ex.getMessage() + "; class:" + ex.getClass());
         return null;
     }
 }

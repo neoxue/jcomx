@@ -7,4 +7,7 @@ public class DecorException extends Exception{
     public DecorException(String message) {
         super(message);
     }
+    public DecorException(Throwable throwable) {
+        super(throwable);
+    }
 }

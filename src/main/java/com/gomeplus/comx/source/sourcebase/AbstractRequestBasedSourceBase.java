@@ -3,6 +3,7 @@ package com.gomeplus.comx.source.sourcebase;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.TinyTemplate;
 import com.gomeplus.comx.source.Source;
+import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 import com.gomeplus.comx.utils.rest.RequestMessage;
@@ -20,7 +21,7 @@ import java.util.Map;
 abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
     public AbstractRequestBasedSourceBase(Config conf) {super(conf);}
 
-    public Object executeLoading(Context context, Config sourceOptions, HashMap reservedVariables) throws ConfigException, UnmatchedRequestMethodException, UrlException, IOException{
+    public Object executeLoading(Context context, Config sourceOptions, HashMap reservedVariables) throws ConfigException, UnmatchedRequestMethodException, IOException, SourceException{
         String method                   = sourceOptions.str(Source.FIELD_METHOD, RequestMessage.METHOD_GET);
         RequestMessage currentRequest   = context.getRequest();
         ReservedParameterManager reservedParameterManager = ReservedParameterManager.fromRequest(currentRequest);
@@ -35,11 +36,17 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
             requestData = currentRequest.getData();
         }
 
+        try {
         // Url 生成错误 处理
         Url url = new Url(targetUrl);
         RequestMessage request = new RequestMessage(url, method, requestData, reservedParameterManager.getFilteredReservedHeaders(), 10);
 
-        return this.doRequest(request, context);
+        // TODO handle exceptions
+            return this.doRequest(request, context);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new SourceException(ex.getMessage());
+        }
     }
 
 
@@ -63,7 +70,7 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
         return true;
     }
 
-    abstract Object doRequest(RequestMessage request,Context context) throws IOException;
+    abstract Object doRequest(RequestMessage request,Context context) throws IOException, Exception;
     abstract String getUrlPrefix(Context context) throws ConfigException;
 
 

@@ -1,8 +1,9 @@
-package com.gomeplus.comx.utils.rest.clients;
+package com.gomeplus.comx.rest.clients;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.utils.config.Config;
+import com.gomeplus.comx.utils.rest.clients.ApacheHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;

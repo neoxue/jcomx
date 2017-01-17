@@ -10,6 +10,9 @@ import java.util.HashMap;
 /**
  * Created by xue on 12/23/16.
  * ComxConfLoader 当中
+ *
+ * 实现 http/redis/inner
+ * 还应当实现 dubbo, protobuf
  */
 public class SourceBaseFactory {
     private static final String DEFAULT_BASE_ID         = "default";
@@ -54,7 +57,7 @@ public class SourceBaseFactory {
         String type = conf.str(FIELD_TYPE, DEFAULT_TYPE);
         switch (type) {
             case TYPE_HTTP:  return new HttpSourceBase(conf);
-            // TODO
+            // TODO 添加其他source base
             case TYPE_REDIS: return new RedisSourceBase(conf);
             default:         throw new UnknownSourceBaseTypeException("unkown source base type:"+ type);
         }
@@ -62,12 +65,12 @@ public class SourceBaseFactory {
 
     public void putSourceBase(AbstractSourceBase sourceBase) throws ConfigException{
         if (sourceBase.getId().equals(SELF_BASE_ID)) {
-            // TODO 添加warn 日志， 或者直接抛出异常?
-            return;
+            throw new ConfigException("self is A RESERVED base ID");
         }
         pool.put(sourceBase.getId(), sourceBase);
     }
 
+    //TODO 添加兼容或者抛出异常
     public static AbstractSourceBase getSourceBase(String id) {
         return pool.get(id);
     }

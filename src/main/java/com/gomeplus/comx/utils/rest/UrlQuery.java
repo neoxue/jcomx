@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.util.*;
 
 import com.google.common.base.Splitter;
+import org.apache.http.client.utils.URLEncodedUtils;
 
 /**
  * Created by xue on 12/19/16.
@@ -17,29 +18,43 @@ import com.google.common.base.Splitter;
  * and more info: for PHP, it suggests a style: id[]=a&id[]=b;
  */
 public class UrlQuery implements ArrayAccessBase{
-    private String  queryString;
-    private HashMap parsedParameters = new HashMap();
+    private String                  queryString;
+    private HashMap<String, String> parsedParameters;
+
+    public UrlQuery(String queryString, HashMap<String, String> parsedParameters) {
+        this.queryString = queryString;
+        this.parsedParameters = parsedParameters;
+    }
+    // implements interface
+    public Object get(Object key) {
+        return parsedParameters.get(key);
+    }
+
+    public HashMap<String, String> getParameters() {
+        return this.parsedParameters;
+    }
+
+
 
     /**
      * @param queryString
      * @throws UnsupportedEncodingException
      */
+    /*
     public UrlQuery(String queryString) throws UnsupportedEncodingException {
         this.queryString = queryString;
         //parsedParameters = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(queryString);
-        /*
-        final Map<String, List<String>> query_pairs = new LinkedHashMap<String, List<String>>();
-        final String[] pairs = queryString.split("&");
-        for(String pair: pairs) {
-            final int idx = pair.indexOf("=");
-            final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
-            if (!query_pairs.containsKey(key)) {
-                query_pairs.put(key, new LinkedList<String>());
-            }
-            final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
-            query_pairs.get(key).add(value);
-        }
-        */
+        //final Map<String, List<String>> query_pairs = new LinkedHashMap<String, List<String>>();
+        //final String[] pairs = queryString.split("&");
+        //for(String pair: pairs) {
+        //    final int idx = pair.indexOf("=");
+        //    final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+        //    if (!query_pairs.containsKey(key)) {
+        //        query_pairs.put(key, new LinkedList<String>());
+        //    }
+        //    final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+        //    query_pairs.get(key).add(value);
+        //}
         final String[] pairs = queryString.split("&");
         for(String pair: pairs) {
             final int idx = pair.indexOf("=");
@@ -51,18 +66,7 @@ public class UrlQuery implements ArrayAccessBase{
             parsedParameters.put(key, value);
         }
     }
-
-    // implements interface
-    public Object get(Object key) {
-        if (key.equals("queryString"))      return queryString;
-        return parsedParameters.get(key);
-    }
-
-    public HashMap<String, String> getParameters() {
-        return this.parsedParameters;
-    }
-
-
+    */
 
 
 

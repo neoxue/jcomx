@@ -1,6 +1,7 @@
 package com.gomeplus.comx.source.sourcebase;
 
 import com.gomeplus.comx.context.Context;
+import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 import com.gomeplus.comx.utils.rest.UrlException;
@@ -18,5 +19,5 @@ abstract public class AbstractSourceBase {
     public AbstractSourceBase(Config conf) {this.conf = conf;}
 
     public String getId() throws ConfigException{ return conf.rstr(AbstractSourceBase.FIELD_ID);}
-    abstract public Object executeLoading(Context context, Config sourceOptions, HashMap<String, Object> reservedVariables) throws ConfigException, UnmatchedRequestMethodException, UrlException, IOException;
+    abstract public Object executeLoading(Context context, Config sourceOptions, HashMap<String, Object> reservedVariables) throws ConfigException, SourceException, IOException;
 }

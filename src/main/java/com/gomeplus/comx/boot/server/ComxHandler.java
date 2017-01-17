@@ -37,26 +37,27 @@ class ComxHandler extends AbstractHandler {
             String headerName = headersNames.nextElement().toString();
             headers.put(headerName, request.getHeader(headerName));
         }
-        Url url         = new Url(request.getRequestURL() + "?" + request.getQueryString());
-        String dataStr  = request.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
-        JSONObject data = JSON.parseObject(dataStr);
+        try {
+            Url url = new Url(request.getRequestURL() + "?" + request.getQueryString());
+            String dataStr = request.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
+            JSONObject data = JSON.parseObject(dataStr);
 
 
-
-        requestMessage.setHeaderParameters(headers);
-        requestMessage.setUrl(url);
-        requestMessage.setData(data);
-        requestMessage.setMethod(request.getMethod());
-
+            requestMessage.setHeaderParameters(headers);
+            requestMessage.setUrl(url);
+            requestMessage.setData(data);
+            requestMessage.setMethod(request.getMethod());
 
 
+            ResponseMessage responseMessage = BootStrap.start(requestMessage);
 
-        ResponseMessage responseMessage = BootStrap.start(requestMessage);
-
-        // 将服务器处理后的结果返回给调用URL的客户端
-        print(baseRequest, response, responseMessage);
-        //ResponseMessage responseMessage = new ResponseMessage(null, "", "200");
-        //print(baseRequest, response, responseMessage);
+            // 将服务器处理后的结果返回给调用URL的客户端
+            print(baseRequest, response, responseMessage);
+            //ResponseMessage responseMessage = new ResponseMessage(null, "", "200");
+            //print(baseRequest, response, responseMessage);
+        } catch (Exception ex) {
+            throw new IOException(ex.getMessage());
+        }
     }
 
     /**

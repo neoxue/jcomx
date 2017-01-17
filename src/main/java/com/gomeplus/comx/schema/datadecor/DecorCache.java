@@ -47,7 +47,7 @@ public class DecorCache {
         }
         TinyTemplate keyTpl = new TinyTemplate(config.rstr(DecorCache.FIELD_KEY));
         // TODO 添加 global 分支
-        String prefix = context.getRequest().getUrl().getPath() + ":";
+        String prefix = context.getRequest().getUrl().get("path") + ":";
         HashMap vars = new HashMap();
         vars.put("data", data);
         vars.put("request", context.getRequest());

@@ -11,4 +11,7 @@ public class StrategyException extends ConfigException {
     public StrategyException(String message) {
         super(message);
     }
+    public StrategyException(Throwable throwable) {
+        super(throwable);
+    }
 }

@@ -24,9 +24,9 @@ public class Handler {
             Url url         = context.getRequest().getUrl();
             // 规范约定应当为map形式， 但最终并不强制要求是
             JSONObject data = new JSONObject();
-            context.getLogger().log("in url" + url.getUrl(), "info");
+            context.getLogger().log("Handler in url" + url.getUrl(), "info");
 
-            Schema schema   = SchemaLoader.load(url.getPath(), "get");
+            Schema schema   = SchemaLoader.load(url.get("path").toString(), "get");
             context.setSchema(schema);
             // TODO 处理登录验证
             AbstractDecor rootdecor = DecorFactory.create(schema.getConf(), AbstractDecor.TYPE_ROOT);
