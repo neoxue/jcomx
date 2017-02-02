@@ -1,6 +1,7 @@
 package com.gomeplus.comx.source;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.TinyTemplate;
 import com.gomeplus.comx.schema.onError.Strategy;
@@ -11,6 +12,8 @@ import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +45,7 @@ public class Source {
 
     /**
      * source 是一个对应的source 实例， 提供loadData 返回 Map Object;(或非Map)
-     * 它将使用 sourcebase sourceCache localCache 三类资源
+     * 它将使用 sourcebase 资源以及 sourceCache localCache 缓存
      * 同一个source 应对refJsonPath 不同情况下拥有不同运行结果，所以不能是object 属性
      * 不拥有变量 reservedVariables
      * renderedUri 会随着 reservedVariables 变化而不断变化
@@ -101,9 +104,7 @@ public class Source {
                 setCache(context, renderedUri, data);
             }
 
-            String jsonPath = conf.str(FIELD_JSON_PATH, "");
-            if (!jsonPath.isEmpty()) return this.extractDataWithJsonPath(data);
-            return data;
+            return postHandle(data);
         } catch (Exception ex) {
             context.getLogger().error("Source loading doLoadData error:" + ex.getMessage() + "; " + ex.getClass());
             //TODO 记录详细日志 方式
@@ -178,18 +179,17 @@ public class Source {
 
 
 
-
-    // TODO 逻辑补写
-    public Object extractDataWithJsonPath(Object data) {
-        return data;
+    protected Object postHandle(Object data) {
+        String jsonPath = conf.str(FIELD_JSON_PATH, "");
+        if (jsonPath.isEmpty()) return data;
+        Object matchedNode = JSONPath.eval(data, jsonPath);
+        if (conf.bool(FIELD_FIRST_ENTRY_ONLY, false)) {
+            return (matchedNode.getClass().isArray())? Array.get(matchedNode, 0):null;
+        }
+        return matchedNode;
     }
 
-
-
-
-
-
-    public String getUri() throws ConfigException{
+    protected String getUri() throws ConfigException{
         return conf.rstr(Source.FIELD_URI);
     }
 

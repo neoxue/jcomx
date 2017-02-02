@@ -11,8 +11,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by xue on 12/15/16.
@@ -22,24 +21,24 @@ public class RequestMessage implements ArrayAccessBase{
     public static final String METHOD_POST     = "post";
     public static final String METHOD_DELETE   = "delete";
     public static final String METHOD_PUT      = "put";
-    static final String HEADER_FIELD_TRACE_ID           = "X-Gomeplus-Trace-Id";
-    static final String HEADER_FIELD_X_FORWARDED_FOR    = "X-Forwarded-For";
-    static final String QUERY_FIELD_TRACE_ID            = "traceId";
-    static final String DEFAULT_TRACE_ID_PREFIX         = "COMX";
+    private static final String HEADER_FIELD_TRACE_ID           = "X-Gomeplus-Trace-Id";
+    private static final String HEADER_FIELD_X_FORWARDED_FOR    = "X-Forwarded-For";
+    private static final String QUERY_FIELD_TRACE_ID            = "traceId";
+    private static final String DEFAULT_TRACE_ID_PREFIX         = "COMX";
 
-    // TODO
+    @Deprecated
     protected HashMap<String, String>   commonParameterHolder;
 
     protected Url                       url;
     protected String                    method;
-    protected Map                       data;
+    protected Map<String, Object>       data;
     protected HashMap<String, String>   headerParameters;
     protected Integer                   timeout;
 
     // constructors;
-    public RequestMessage() {
-    }
-    public RequestMessage(Url url, String method, Map data, HashMap<String, String> headerParameters, Integer timeout) {
+    //public RequestMessage() {
+    //}
+    public RequestMessage(Url url, String method, Map<String, Object> data, HashMap<String, String> headerParameters, Integer timeout) {
         this.url                = url;
         this.method             = method;
         this.data               = data;
@@ -50,9 +49,9 @@ public class RequestMessage implements ArrayAccessBase{
 
 
     // implements interface
-    // TODO containsKey 实现
     public boolean containsKey(Object key) {
-        return true;
+        List<String> templist = Arrays.asList("url", "method", "data", "headerParameters", "timeout");
+        return templist.contains(key);
     }
     public Object get(Object key) {
         if (key.equals("url"))                  return url;
@@ -103,7 +102,57 @@ public class RequestMessage implements ArrayAccessBase{
 
 
 
+    /**
+     * 初始化 traceId
+     * TODO UUID 生成32位，可以改为更短而不失去精度, http://www.iteye.com/topic/1134781
+     * @return String
+     */
+    public String initTraceId() {
+        String traceId = getTraceId();
+        if (traceId.isEmpty()) {
+            traceId = DEFAULT_TRACE_ID_PREFIX + UUID.randomUUID().toString();
+            setHeaderParameter(HEADER_FIELD_TRACE_ID, traceId);
+        }
+        return traceId;
+    }
 
+    /**
+     * traceId 追踪标识
+     * traceId 是用于追踪日志用的标识字符串, 通过header X-Gomeplus-Trace-Id或 url query traceId传递, header 和URL并存时,以URL为准.
+     * @return String|""
+     */
+    public String getTraceId() {
+        String traceId = (String)url.getQuery().get(QUERY_FIELD_TRACE_ID);
+        if (null != traceId) return traceId;
+        traceId = getHeaderParameter(HEADER_FIELD_TRACE_ID);
+        if (null != traceId) return traceId;
+        return "";
+    }
+
+    //TODO url
+    public void setTraceId(String newtraceId) {
+        if (url.getQuery().containsKey(QUERY_FIELD_TRACE_ID)) {
+            url.getQuery().put(QUERY_FIELD_TRACE_ID, newtraceId);
+        } else {
+            setHeaderParameter(HEADER_FIELD_TRACE_ID, newtraceId);
+        }
+    }
+
+    public String getJsonp() {
+        return (String)url.getQuery().get("jsonp");
+    }
+
+
+
+
+
+
+    public void setHeaderParameter(String key, String value) {
+        headerParameters.put(key, value);
+    }
+    public String getHeaderParameter(String key) {
+        return headerParameters.get(key);
+    }
 
 
 
@@ -158,7 +207,7 @@ public class RequestMessage implements ArrayAccessBase{
         return data;
     }
 
-    public void setData(Map data) {
+    public void setData(Map<String, Object> data) {
         this.data = data;
     }
 

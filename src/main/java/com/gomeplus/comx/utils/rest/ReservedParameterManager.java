@@ -5,10 +5,12 @@ import java.util.HashMap;
 /**
  * Created by xue on 12/23/16.
  * 部分请求参数保留到调用接口的类
+ * 以此类废弃 commonParameterHolder
+ * TODO 将配置部分抽取出来，读取配置
  */
 public class ReservedParameterManager {
 
-    public static final HashMap<String, String> RESERVED_PARAMETERS = new HashMap<String, String>(){
+    private static final HashMap<String, String> RESERVED_PARAMETERS = new HashMap<String, String>(){
         {
             put("loginToken",   "X-Gomeplus-Login-Token"    );
             put("userId",       "X-Gomeplus-User-Id"        );
@@ -21,10 +23,9 @@ public class ReservedParameterManager {
             put("appVersion",   "X-Gomeplus-App-Version"    );
         }
     };
-    public static final HashMap<String, String> RESERVED_TO_QUERY_PARAMERTERS = new HashMap<String, String>(){
+    private static final HashMap<String, String> RESERVED_TO_QUERY_PARAMERTERS = new HashMap<String, String>(){
         {
             put("uniqueDeviceId",  "X-Gomeplus-Unique-Device-Id");
-
         }
     };
 
@@ -34,6 +35,13 @@ public class ReservedParameterManager {
     protected HashMap<String, String> reservedQueryParams;
     protected HashMap<String, String> reservedHeaderParams;
 
+    /**
+     * 1, query to query, header to header
+     * 2, reserved to query. (header and query to query);
+     * if both key exists, choose query;
+     * @param request RequestMessage
+     * @return ReservedParameterManager
+     */
     public static ReservedParameterManager fromRequest(RequestMessage request) {
         HashMap<String, String> headers = request.getHeaderParameters();
         HashMap<String, String> queries = request.getUrl().getQuery().getParameters();
@@ -44,7 +52,7 @@ public class ReservedParameterManager {
         for (String queryName: RESERVED_PARAMETERS.keySet()) {
             String headerName = RESERVED_PARAMETERS.get(queryName);
             if (headers.containsKey(headerName)) {
-                reservedHeaderParams.put(queryName, headers.get(headerName));
+                reservedHeaderParams.put(headerName, headers.get(headerName));
             }
             if (queries.containsKey(queryName)) {
                 reservedQueryParams.put(queryName, queries.get(queryName));
@@ -75,11 +83,43 @@ public class ReservedParameterManager {
     public HashMap<String, String> getFilteredReservedHeaders() {
         HashMap<String, String> result = new HashMap<>();
         for (String queryName: reservedHeaderParams.keySet()) {
-            if (reservedQueryParams.containsKey(queryName)){
+            String headerName = RESERVED_PARAMETERS.get(queryName);
+            if (reservedQueryParams.containsKey(headerName)){
                 continue;
             }
-            result.put(RESERVED_PARAMETERS.get(queryName), reservedHeaderParams.get(queryName));
+            result.put(headerName, reservedHeaderParams.get(queryName));
         }
         return result;
     }
+
+
+
+    //TODO
+    public String getUserId() {
+        String headerKey = "X-Gomeplus-User-Id";
+        String queryKey  = "userId";
+        if (reservedQueryParams.containsKey(queryKey))    return reservedQueryParams.get(queryKey);
+        if (reservedHeaderParams.containsKey(headerKey))  return reservedHeaderParams.get(headerKey);
+        return null;
+    }
+
+    public String getLoginToken() {
+        String headerKey = "X-Gomeplus-Login-Token";
+        String queryKey  = "loginToken";
+        if (reservedQueryParams.containsKey(queryKey))    return reservedQueryParams.get(queryKey);
+        if (reservedHeaderParams.containsKey(headerKey))  return reservedHeaderParams.get(headerKey);
+        return null;
+    }
+
+    public String getApp() {
+        String headerKey = "X-Gomeplus-App";
+        String queryKey  = "app";
+        if (reservedQueryParams.containsKey(queryKey))    return reservedQueryParams.get(queryKey);
+        if (reservedHeaderParams.containsKey(headerKey))  return reservedHeaderParams.get(headerKey);
+        return null;
+    }
 }
+
+
+
+

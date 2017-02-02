@@ -20,6 +20,8 @@ public class DecorFactory
             case "each":        return new EachDecor(conf);
             case "root":        return new RootDecor(conf);
             case "composition": return new CompositionDecor(conf);
+            case "fixed":       return new FixedDecor(conf);
+            case "script":      return new ScriptDecor(conf);
 
             default: throw new UnknownDecorTypeException(type);
         }

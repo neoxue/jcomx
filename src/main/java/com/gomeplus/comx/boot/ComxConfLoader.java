@@ -10,6 +10,7 @@ import com.gomeplus.comx.utils.config.ConfigException;
 
 /**
  * Created by xue on 12/16/16.
+ * 在服务启动时加载配置
  */
 public class ComxConfLoader {
     private static boolean initialized = false;
@@ -29,6 +30,7 @@ public class ComxConfLoader {
     // synchronized TODO
     // 提供更新方法 TODO
     public static Config load()  throws ConfigException{
+        initialize();
         if (!initialized) {
             initialize();
         }

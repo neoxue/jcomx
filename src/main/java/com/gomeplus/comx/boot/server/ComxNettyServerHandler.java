@@ -59,16 +59,20 @@ public class ComxNettyServerHandler extends ChannelInboundHandlerAdapter {
             }
             // TODO 优化 读 body
             JSONObject data = new JSONObject();
-            RequestMessage requestMessage = new RequestMessage();
-            requestMessage.setMethod(method);
             url = "http://127.0.0.1:8889" + url;
             Url rurl = new Url(url);
-            requestMessage.setUrl(rurl);
-            requestMessage.setData(data);
-            requestMessage.setHeaderParameters(headerParameters);
+            //RequestMessage requestMessage = new RequestMessage();
+            //requestMessage.setMethod(method);
+            //requestMessage.setUrl(rurl);
+            //requestMessage.setData(data);
+            //requestMessage.setHeaderParameters(headerParameters);
+
+            RequestMessage requestMessage = new RequestMessage(rurl, method, data, headerParameters, 0);
+
 
 
             ResponseMessage responseMessage = BootStrap.start(requestMessage);
+            responseMessage.setJsonp(requestMessage.getJsonp());
 
 
 

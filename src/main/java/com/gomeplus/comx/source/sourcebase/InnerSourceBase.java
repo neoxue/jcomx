@@ -1,5 +1,6 @@
 package com.gomeplus.comx.source.sourcebase;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.boot.ComxConfLoader;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.Schema;
@@ -12,6 +13,7 @@ import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.rest.RequestMessage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xue on 1/12/17.
@@ -22,8 +24,7 @@ public class InnerSourceBase extends AbstractRequestBasedSourceBase{
     }
 
     protected Object doRequest(RequestMessage request, Context context) throws Exception {
-            // TODO do not use clone;
-            Context newContext = context.clone();
+            Context newContext = context.copy();
             newContext.setRequest(request);
             String path = request.getUrl().getRelatedPath(ComxConfLoader.getUrlPrefix());
 
@@ -33,9 +34,12 @@ public class InnerSourceBase extends AbstractRequestBasedSourceBase{
             AbstractDecor rootdecor = DecorFactory.create(schema.getConf(), AbstractDecor.TYPE_ROOT);
             rootdecor.decorate(data, newContext);
 
+            context.getLogger().debug("" + conf.rawData());
+            context.getLogger().debug("InnerSourceBase :" + new JSONObject((Map)data).toJSONString());
             return data;
     }
     public String getUrlPrefix(Context context) {
-        return context.getUrlPrefix();
+        return ComxConfLoader.getUrlPrefix();
+        //return context.getUrlPrefix();
     }
 }

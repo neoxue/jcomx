@@ -18,11 +18,15 @@ public class SourceBaseFactory {
     private static final String DEFAULT_BASE_ID         = "default";
     private static final String FIELD_ATOMIC_URL_PREFIX = "atomicUrlPrefix";
     private static final String FIELD_SOURCE_BASES      = "sourceBases";
+    private static final String FIELD_ID                = "id";
+
+
     private static final String SELF_BASE_ID            = "self";
 
     private static final String FIELD_TYPE              = "type";
     private static final String TYPE_HTTP               = "http";
     private static final String TYPE_REDIS              = "redis";
+    private static final String TYPE_SELF               = "self";
 
     private static final String DEFAULT_TYPE            = "http";
 
@@ -33,16 +37,16 @@ public class SourceBaseFactory {
         SourceBaseFactory factory       = new SourceBaseFactory();
 
         // sourceBaseFactory 添加默认原子 base
-        String defaultAtomicUrlPrefix   = conf.str(FIELD_ATOMIC_URL_PREFIX, "");
-        if (null != defaultAtomicUrlPrefix){
-            HashMap<String, Object> simplehashmap = new HashMap<>();
-            simplehashmap.put(HttpSourceBase.FIELD_ID,          DEFAULT_BASE_ID);
-            simplehashmap.put(HttpSourceBase.FIELD_URL_PREFIX,  DEFAULT_BASE_ID);
+        //String defaultAtomicUrlPrefix   = conf.str(FIELD_ATOMIC_URL_PREFIX, "");
+        //if (null != defaultAtomicUrlPrefix){
+        //    HashMap<String, Object> simplehashmap = new HashMap<>();
+        //    simplehashmap.put(HttpSourceBase.FIELD_ID,          DEFAULT_BASE_ID);
+        //    simplehashmap.put(HttpSourceBase.FIELD_URL_PREFIX,  defaultAtomicUrlPrefix);
 
-            JSONObject simplejson = new JSONObject(simplehashmap);
-            HttpSourceBase httpSourceBase = new HttpSourceBase(new Config(simplejson));
-            factory.putSourceBase(httpSourceBase);
-        }
+        //    JSONObject simplejson = new JSONObject(simplehashmap);
+        //    HttpSourceBase httpSourceBase = new HttpSourceBase(new Config(simplejson));
+        //    factory.putSourceBase(httpSourceBase);
+        //}
 
         // other bases;
         Config bases = conf.sub(FIELD_SOURCE_BASES);
@@ -50,6 +54,12 @@ public class SourceBaseFactory {
             Config aconf = bases.sub(i);
             factory.putSourceBase(populateBaseObject(aconf));
         }
+        // 添加 self;
+        JSONObject selfObj = new JSONObject();
+        selfObj.put(FIELD_TYPE, SELF_BASE_ID);
+        selfObj.put(FIELD_ID, TYPE_SELF);
+        Config selfconf = new Config(selfObj);
+        factory.putSourceBase(populateBaseObject(selfconf));
         return factory;
     }
 
@@ -57,22 +67,25 @@ public class SourceBaseFactory {
         String type = conf.str(FIELD_TYPE, DEFAULT_TYPE);
         switch (type) {
             case TYPE_HTTP:  return new HttpSourceBase(conf);
-            // TODO 添加其他source base
+            case TYPE_SELF:  return new InnerSourceBase(conf);
             case TYPE_REDIS: return new RedisSourceBase(conf);
+            // TODO 添加其他source base
             default:         throw new UnknownSourceBaseTypeException("unkown source base type:"+ type);
         }
     }
 
     public void putSourceBase(AbstractSourceBase sourceBase) throws ConfigException{
-        if (sourceBase.getId().equals(SELF_BASE_ID)) {
-            throw new ConfigException("self is A RESERVED base ID");
-        }
+        //if (sourceBase.getId().equals(SELF_BASE_ID)) {
+        //    throw new ConfigException("self is A RESERVED base ID");
+        //}
         pool.put(sourceBase.getId(), sourceBase);
     }
 
     //TODO 添加兼容或者抛出异常
-    public static AbstractSourceBase getSourceBase(String id) {
-        return pool.get(id);
+    //if (id.equals(SELF_BASE_ID))
+    public static AbstractSourceBase getSourceBase(String id) throws UnknownSourceBaseTypeException{
+        if (pool.containsKey(id)) return pool.get(id);
+        throw new UnknownSourceBaseTypeException(id);
     }
 
 

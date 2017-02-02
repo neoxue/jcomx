@@ -10,7 +10,7 @@ import com.gomeplus.comx.utils.config.Loader;
  */
 public class SchemaLoader {
     public static Schema load(String urlPath, String method) throws ConfigException{
-        String pathfile = ComxConfLoader.getComxHome() + "/apis/" + urlPath;
+        String pathfile = ComxConfLoader.getComxHome() + "/apis" + urlPath;
         Config conf = Loader.fromJsonFile(pathfile+ "/"+ method + ".json");
         Schema schema = new Schema(conf);
         return schema;

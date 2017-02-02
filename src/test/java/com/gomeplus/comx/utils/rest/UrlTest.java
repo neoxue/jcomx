@@ -1,14 +1,10 @@
-package com.gomeplus.comx.rest;
+package com.gomeplus.comx.utils.rest;
 
-import com.gomeplus.comx.utils.rest.Url;
-import com.gomeplus.comx.utils.rest.UrlException;
-import com.gomeplus.comx.utils.rest.clients.ApacheHttpClient;
-import org.apache.http.HttpResponse;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -30,17 +26,36 @@ public class UrlTest {
         assertEquals("not equal", url.get("hash"), "fragment");
         assertEquals("not equal", url.get("queryString"), "query=test&中文query=中文测试");
         assertEquals("not equal", url.get("userInfo"), "username:password");
-
     }
 
 
     @Test
     public void testRelatedPath() throws UrlException, Exception{
-        String urlstr = "https://username:password@a.b.com/p/a/t/h?query=test&中文query=中文测试#fragment";
+        String urlstr = "https://username:password@a.b.com/p/a/t/h?query=test&query3=" + URLEncoder.encode("中文测试value", "UTF-8");
         String prefixUrl = "https://username:password@a.b.com/p/a";
         Url aUrl = new Url(urlstr);
         String testpath = aUrl.getRelatedPath(prefixUrl);
         assertEquals("not equal", testpath, "/t/h");
+    }
+
+    @Test
+    public void testgenerateUrl() throws UnsupportedEncodingException, UrlException{
+        String urlstr = "https://username:password@a.b.com:8833/p/a/t/h?query=test&query3=" + URLEncoder.encode("中文测试value", "UTF-8");
+        //urlstr = "http://a.b.com/p/a/t/h?query=test&中文query=中文测试#fragment";
+        Url url = new Url(urlstr);
+        HashMap<String, String> params= new HashMap<>();
+        params.put("query",  "value");
+
+        assertEquals("not equal", "https://username:password@a.b.com:8833/p/a/t/h?query=value", url.regenerateUrlStringWithParametersStr(params));
+        assertEquals("not equal", "https://username:password@a.b.com:8833/p/a/t/h?query=test&query3=%E4%B8%AD%E6%96%87%E6%B5%8B%E8%AF%95value", url.mergeQueryParameters(params, true).getUrl());
+        assertEquals("not equal", "https://username:password@a.b.com:8833/p/a/t/h?query=value&query3=%E4%B8%AD%E6%96%87%E6%B5%8B%E8%AF%95value", url.mergeQueryParameters(params, false).getUrl());
+
+
 
     }
 }
+
+
+
+
+

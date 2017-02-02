@@ -29,7 +29,6 @@ class ComxHandler extends AbstractHandler {
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        RequestMessage requestMessage = new RequestMessage();
         // build context
         Enumeration headersNames2 = request.getHeaderNames();
         HashMap<String,String> headers  = new HashMap();
@@ -43,12 +42,7 @@ class ComxHandler extends AbstractHandler {
             JSONObject data = JSON.parseObject(dataStr);
 
 
-            requestMessage.setHeaderParameters(headers);
-            requestMessage.setUrl(url);
-            requestMessage.setData(data);
-            requestMessage.setMethod(request.getMethod());
-
-
+            RequestMessage requestMessage = new RequestMessage(url, request.getMethod(), data, headers, 0);
             ResponseMessage responseMessage = BootStrap.start(requestMessage);
 
             // 将服务器处理后的结果返回给调用URL的客户端

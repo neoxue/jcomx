@@ -45,7 +45,7 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
             return this.doRequest(request, context);
         } catch (Exception ex) {
             ex.printStackTrace();
-            throw new SourceException(ex.getMessage());
+            throw new SourceException(ex);
         }
     }
 

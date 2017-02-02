@@ -27,11 +27,8 @@ class TinyTemplateTest extends GroovyTestCase {
         HashMap headers = new HashMap();
         JSONObject data = new JSONObject();
         data.put("memo", "ttest");
-        RequestMessage requestMessage = new RequestMessage();
-        requestMessage.setHeaderParameters(headers);
-        requestMessage.setUrl(url);
-        requestMessage.setData(data);
-        requestMessage.setMethod("get");
+
+        RequestMessage requestMessage = new RequestMessage(url, "get", data, headers, 0);
 
         Context context = new Context();
         context.setLogger(new ComxLogger());

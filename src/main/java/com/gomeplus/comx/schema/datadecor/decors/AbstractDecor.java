@@ -44,7 +44,7 @@ public abstract class AbstractDecor extends ConfBaseNode{
     public AbstractDecor(Config conf){
         super(conf);
     }
-    abstract public void doDecorate(Object data, Context context) throws ConfigException, SourceException;
+    abstract public void doDecorate(Object data, Context context) throws ConfigException, SourceException, DecorException;
     abstract public String getType();
 
 
@@ -73,6 +73,7 @@ public abstract class AbstractDecor extends ConfBaseNode{
             this.executeChildDecors(data, context);
             // TODO decorCache set after children;
         } catch(Exception ex) {
+            context.getLogger().error(ex);
             context.getLogger().error("Decorate error:" + ex.getMessage() + "; class:" + ex.getClass());
             Strategy.fromConf(conf.sub("onError")).handleDecorException(ex, context, data);
         }

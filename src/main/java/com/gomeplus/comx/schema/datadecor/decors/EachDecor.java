@@ -82,10 +82,10 @@ public class EachDecor extends AbstractDecor {
         vars.put("data", data);
         Object loaded = source.loadData(context, vars);
         Map obj = new HashMap<>();
-        if (!field.isEmpty()) {
-            obj.put(field, loaded);
-        } else {
+        if (field.isEmpty()) {
             obj = (Map) loaded;
+        } else {
+            obj.put(field, loaded);
         }
         if (ref instanceof Map) {
             for (Object key: obj.keySet()) {

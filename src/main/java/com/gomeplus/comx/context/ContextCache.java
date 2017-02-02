@@ -21,12 +21,12 @@ public class ContextCache {
     }
 
     public String setMapObject(String key, Map value, Integer time) {
-        System.out.println("set "+ key);
+        //System.out.println("set "+ key);
         JSONObject jsonObject = new JSONObject(value);
         return cache.set(key, jsonObject.toJSONString(), time);
     }
     public Object getMapObject(String key) {
-        System.out.println("get "+ key);
+        //System.out.println("get "+ key);
         if (refreshingEnabled) return null;
         String value = cache.get(key);
         try {

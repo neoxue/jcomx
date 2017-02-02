@@ -18,14 +18,9 @@ public class Context {
     private ResponseMessage         response;
     private ComxLogger              logger;
     private ContextCache            cache;
+    // TODO 处理成特殊的类
     private HashMap<String, Object> localCache = new HashMap<>();
     private Boolean                 localCacheEnabled = false;
-
-
-
-    @Deprecated
-    private String          urlPrefix;
-
 
     private String          traceId;
     // 记录各资源请求
@@ -37,24 +32,17 @@ public class Context {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    @Override
-    public Context clone() throws CloneNotSupportedException {
-        return (Context) super.clone();
+    public Context copy() {
+        Context newContext    = new Context();
+        newContext.logger     = this.getLogger();
+        newContext.cache      = this.getCache();
+        newContext.count      = this.getCount();
+        newContext.request    = this.getRequest();
+        newContext.schema     = this.getSchema();
+        newContext.response   = this.getResponse();
+        newContext.localCache = this.getLocalCache();
+        return newContext;
     }
-
-
 
 
 
@@ -74,7 +62,6 @@ public class Context {
     public void setLocalCache(HashMap<String, Object> localCache) {
         this.localCache = localCache;
     }
-
 
     public ContextCache getCache() {
         return cache;
@@ -98,16 +85,6 @@ public class Context {
 
     public void setLogger(ComxLogger logger) {
         this.logger = logger;
-    }
-
-    @Deprecated
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
-
-    @Deprecated
-    public void setUrlPrefix(String urlPrefix) {
-        this.urlPrefix = urlPrefix;
     }
 
     public String getTraceId() {

@@ -8,7 +8,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 /**
  * Created by xue on 12/16/16.
  */
-// 需要满足自己调用自己
 public class ResponseMessage {
     private Object    data;
     private Object    error;
@@ -16,8 +15,7 @@ public class ResponseMessage {
 
     private String  message;
     private Integer code;
-    private String  dataType;
-    private String  callback;
+    private String  jsonp;
 
     static final String FIELD_DEBUG                 = "debug";
     static final String FIELD_MESSAGE               = "message";
@@ -49,8 +47,9 @@ public class ResponseMessage {
 
     public String send() {
         JSONObject body = new JSONObject();
-        body.put(this.FIELD_MESSAGE, this.message);
+        body.put(this.FIELD_DEBUG, this.debug);
         body.put(this.FIELD_DATA, this.data);
+        body.put(this.FIELD_MESSAGE, this.message);
         return JSONObject.toJSONString(body, SerializerFeature.WriteMapNullValue);
     }
 
@@ -113,19 +112,11 @@ public class ResponseMessage {
         this.code = code;
     }
 
-    public String getDataType() {
-        return dataType;
+    public String getJsonp() {
+        return jsonp;
     }
 
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    public String getCallback() {
-        return callback;
-    }
-
-    public void setCallback(String callback) {
-        this.callback = callback;
+    public void setJsonp(String jsonp) {
+        this.jsonp = jsonp;
     }
 }
