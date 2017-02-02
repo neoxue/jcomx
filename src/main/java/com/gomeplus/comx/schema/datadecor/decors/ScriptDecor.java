@@ -4,17 +4,22 @@ import com.alibaba.fastjson.JSONPath;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.datadecor.DecorException;
 import com.gomeplus.comx.utils.config.Config;
+import groovy.lang.Binding;
 import groovy.lang.GroovyObject;
+import groovy.lang.GroovyShell;
 import groovy.util.GroovyScriptEngine;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
+ * http://wiki.jikexueyuan.com/project/groovy-introduction/integrating-groovy-applications.html
  * Created by xue on 1/17/17.
- * TODO 还没写完。。
+ * TODO 勉强能用 需要测试用例
  */
 public class ScriptDecor extends AbstractDecor{
     public ScriptDecor(Config conf) {
@@ -30,7 +35,7 @@ public class ScriptDecor extends AbstractDecor{
 
     static {
         try {
-            groovyScriptEngine = new GroovyScriptEngine(root);
+            groovyScriptEngine = new GroovyScriptEngine("/www/comx-conf/groovy-scripts/");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,13 +46,30 @@ public class ScriptDecor extends AbstractDecor{
         ArrayList matchedNodes = this.getMatchedNodes(data, context);
 
         try {
-            String scriptName = conf.rstr("script");
-            Class scriptClass = groovyScriptEngine.loadScriptByName(scriptName);
-            GroovyObject scriptInstance = (GroovyObject) scriptClass.newInstance();
-            for (Object ref: matchedNodes) {
-                Object params = new Object[] {data, context, ref};
-                scriptInstance.invokeMethod("callback", params);
+            String scriptName = conf.str("jscript", "");
+            String lambda     = conf.str("jlambda", "");
+            if (!scriptName.isEmpty()) {
+                Class scriptClass = groovyScriptEngine.loadScriptByName(scriptName + ".groovy");
+                GroovyObject scriptInstance = (GroovyObject) scriptClass.newInstance();
+                for (Object ref: matchedNodes) {
+                    Object params = new Object[] {data, context, ref};
+                    scriptInstance.invokeMethod("callback", params);
+                }
+            } else if(!lambda.isEmpty()) {
+                for (Object ref: matchedNodes) {
+                    HashMap<String, Object> variables = new HashMap<>();
+                    variables.put("context", context);
+                    variables.put("data", data);
+                    variables.put("ref", ref);
+                    Binding binding = new Binding(variables);
+
+                    GroovyShell shell = new GroovyShell(binding);
+                    shell.evaluate(lambda);
+                }
+            } else {
+                context.getLogger().error("Decor, ScriptDecor script or lambda empty");
             }
+            // do nothing
         } catch (Exception ex) {
             // 有以下错误
             //(ResourceException | ScriptException | InstantiationException | IllegalAccessException e1)
