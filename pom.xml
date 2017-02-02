@@ -165,11 +165,13 @@
 
 
         <!-- groovy and test-->
+        <!-- https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>2.4.7</version>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.8</version>
         </dependency>
+
         <dependency>
             <groupId>org.codehaus.groovy.maven.runtime</groupId>
             <artifactId>gmaven-runtime-1.0</artifactId>
