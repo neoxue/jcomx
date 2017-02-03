@@ -29,12 +29,11 @@ public class ScriptDecor extends AbstractDecor{
         return AbstractDecor.TYPE_SCRIPT;
     }
 
-    //该变量用于指明groovy脚本所在的父目录
-    static String root[] = new String[]{"/www/comx-conf/groovy-scripts/"};
     static GroovyScriptEngine groovyScriptEngine;
 
     static {
         try {
+            // TODO 从comxconf 里面读取
             groovyScriptEngine = new GroovyScriptEngine("/www/comx-conf/groovy-scripts/");
         } catch (IOException e) {
             e.printStackTrace();

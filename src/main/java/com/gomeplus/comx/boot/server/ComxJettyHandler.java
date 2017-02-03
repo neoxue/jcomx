@@ -22,7 +22,7 @@ import java.util.HashMap;
  * Created by xue on 12/13/16.
  */
 
-class ComxHandler extends AbstractHandler {
+class ComxJettyHandler extends AbstractHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComxJettyServer.class);
 
     @Override

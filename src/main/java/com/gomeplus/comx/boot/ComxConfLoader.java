@@ -37,7 +37,7 @@ public class ComxConfLoader {
         return comxConf;
     }
 
-    public static void initialize()  throws ConfigException, UnknownSourceBaseTypeException{
+    public static void initialize()  throws ConfigException{
         COMX_HOME = "/www/comx-conf";
         String comxConfFile = COMX_HOME + "/comx.conf.json";
         comxConf            = com.gomeplus.comx.utils.config.Loader.fromJsonFile(comxConfFile);

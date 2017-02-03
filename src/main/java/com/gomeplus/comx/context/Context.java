@@ -23,6 +23,7 @@ public class Context {
     private Boolean                 localCacheEnabled = false;
 
     private String          traceId;
+    // TODO
     // 记录各资源请求
     // 似乎可以是个结构体来记录
     // 或者redis count http count ...?

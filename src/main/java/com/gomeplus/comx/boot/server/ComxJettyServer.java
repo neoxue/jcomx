@@ -29,7 +29,7 @@ public class ComxJettyServer {
             context.setResourceBase(".");
             context.setClassLoader(Thread.currentThread().getContextClassLoader());
             server.setHandler(context);
-            context.setHandler(new ComxHandler());
+            context.setHandler(new ComxJettyHandler());
             // 启动服务器
             server.start();
             server.join();
