@@ -29,9 +29,8 @@ class ComxJettyHandler extends AbstractHandler {
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        // build context
-        Enumeration headersNames2 = request.getHeaderNames();
-        HashMap<String,String> headers  = new HashMap();
+        // build request and boot
+        HashMap<String,String> headers  = new HashMap<>();
         for (Enumeration headersNames = request.getHeaderNames(); headersNames.hasMoreElements();) {
             String headerName = headersNames.nextElement().toString();
             headers.put(headerName, request.getHeader(headerName));

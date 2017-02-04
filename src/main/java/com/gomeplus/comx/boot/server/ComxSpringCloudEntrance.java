@@ -1,9 +1,21 @@
 package com.gomeplus.comx.boot.server;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gomeplus.comx.boot.BootStrap;
+import com.gomeplus.comx.utils.rest.RequestMessage;
+import com.gomeplus.comx.utils.rest.ResponseMessage;
+import com.gomeplus.comx.utils.rest.Url;
+import com.gomeplus.comx.utils.rest.UrlException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 /**
  * Created by xue on 2/3/17.
@@ -11,14 +23,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ComxSpringCloudEntrance {
 
-    @RequestMapping("/atom")
-    public JSONObject main() {
-        return new JSONObject();
-    }
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public Object getUserByRibbon(String id) {
-        //return ribbonClient.getUser(id);
-        return new JSONObject();
+    @RequestMapping(value = "/**")
+    public void boot(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        ResponseMessage responseMessage;
+        try {
+            HashMap<String, String> headers = new HashMap<>();
+            for (Enumeration headersNames = request.getHeaderNames(); headersNames.hasMoreElements(); ) {
+                String headerName = headersNames.nextElement().toString();
+                headers.put(headerName, request.getHeader(headerName));
+            }
+            Url url = new Url(request.getRequestURL() + "?" + request.getQueryString());
+            String dataStr = request.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
+            JSONObject data = JSON.parseObject(dataStr);
+
+            RequestMessage requestMessage = new RequestMessage(url, request.getMethod(), data, headers, 0);
+            responseMessage = BootStrap.start(requestMessage);
+        } catch (UrlException ex) {
+            String msg = "handle url error:" + ex.getMessage();
+            responseMessage = new ResponseMessage(null, msg, 500);
+        } catch (IOException ex) {
+            String msg = "unserialize post data error:" + ex.getMessage();
+            responseMessage = new ResponseMessage(null, msg, 500);
+        }
+        print(responseMessage, response);
     }
 
+    public void print(ResponseMessage responseMessage, HttpServletResponse response) throws IOException{
+        response.setContentType("text/json;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().println(responseMessage.send());
+    }
+
+
+
+
+    @RequestMapping(value = "/xue", method = RequestMethod.GET)
+    public String hello() {
+        JSONObject test = new JSONObject();
+        test.put("testxuekey", "testxuevalue");
+        return test.toJSONString();
+    }
 }

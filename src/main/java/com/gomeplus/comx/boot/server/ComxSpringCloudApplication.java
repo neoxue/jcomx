@@ -9,11 +9,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 /**
  * Created by xue on 2/3/17.
+ //@ImportResource("spring/spring-boot.xml")
+ TODO logback-spring.xml & logback.xml 需要合并
  */
 @SpringBootApplication
-@ImportResource("spring/spring-boot.xml")
 @ComponentScan("com.gomeplus.comx")
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 public class ComxSpringCloudApplication {
     public static void main(String[] args) {
         long starTime = System.currentTimeMillis();

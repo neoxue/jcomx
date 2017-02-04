@@ -15,6 +15,9 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <!-- Use the latest version whenever possible. -->
+        <!--
+        <jackson-core-version>2.8.5</jackson-core-version>
+        -->
         <!-- for spring cloud -->
         <start-class>com.gomeplus.comx.boot.server.ComxSpringCloudApplication</start-class>
         <!-- end spring cloud -->
@@ -66,6 +69,7 @@
             <version>4.5.2</version>
         </dependency>
         <!-- end http client-->
+
         <!-- end common utils -->
 
 
@@ -130,7 +134,6 @@
             <version>${nettyversion}</version>
         </dependency>
         <!--
-        all 缺 部分包
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -158,10 +161,10 @@
             <artifactId>guava-base</artifactId>
             <version>r03</version>
         </dependency>
+
         <!-- end io utils -->
 
         <!-- jedis -->
-        <!-- jedis 客户端不兼容 不能随意升级 -->
         <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
         <dependency>
             <groupId>redis.clients</groupId>
@@ -204,38 +207,10 @@
 
         <!-- spring and springcloud -->
         <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server</artifactId>
-            <version>${spring-boot-admin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server-ui</artifactId>
-            <version>${spring-boot-admin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server-ui-hystrix</artifactId>
-            <version>${spring-boot-admin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server-ui-turbine</artifactId>
-            <version>${spring-boot-admin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server-ui-activiti</artifactId>
-            <version>${spring-boot-admin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jolokia</groupId>
-            <artifactId>jolokia-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -244,6 +219,17 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-stream</artifactId>
@@ -258,7 +244,24 @@
         </dependency>
 
 
-
+        <!--swagger2-->
+        <!--
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-spi</artifactId>
+            <version>${swagger2.version}</version>
+        </dependency
+        -->
 
     </dependencies>
 
@@ -305,7 +308,6 @@
             </plugin>
             -->
             <!-- use java 1.8 -->
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -315,15 +317,12 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            -->
             <!-- jetty -->
-            <!--
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.4.0.v20161208</version>
             </plugin>
-            -->
         </plugins>
     </build>
 </project>
