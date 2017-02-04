@@ -7,9 +7,11 @@ import com.gomeplus.comx.utils.rest.RequestMessage;
 import com.gomeplus.comx.utils.rest.ResponseMessage;
 import com.gomeplus.comx.utils.rest.Url;
 import com.gomeplus.comx.utils.rest.UrlException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,4 +65,14 @@ public class ComxSpringCloudEntrance {
         test.put("testxuekey", "testxuevalue");
         return test.toJSONString();
     }
+
+    //@Autowired
+    //RestTemplate restTemplate;
+
+    @RequestMapping(value = "/xuetestservice", method = RequestMethod.GET)
+    public String hello2() {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForEntity("http://COMX/xue", Object.class).getBody().toString();
+    }
+
 }

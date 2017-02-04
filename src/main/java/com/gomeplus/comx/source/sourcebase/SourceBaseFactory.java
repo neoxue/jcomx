@@ -74,7 +74,7 @@ public class SourceBaseFactory {
         }
     }
 
-    public void putSourceBase(AbstractSourceBase sourceBase) throws ConfigException{
+    private void putSourceBase(AbstractSourceBase sourceBase) throws ConfigException{
         //if (sourceBase.getId().equals(SELF_BASE_ID)) {
         //    throw new ConfigException("self is A RESERVED base ID");
         //}
