@@ -25,6 +25,9 @@ import java.util.HashMap;
 @RestController
 public class ComxSpringCloudEntrance {
 
+
+
+
     @RequestMapping(value = "/**")
     public void boot(HttpServletRequest request, HttpServletResponse response) throws IOException{
         ResponseMessage responseMessage;
@@ -57,6 +60,8 @@ public class ComxSpringCloudEntrance {
     }
 
 
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     @RequestMapping(value = "/xue", method = RequestMethod.GET)
@@ -71,13 +76,25 @@ public class ComxSpringCloudEntrance {
 
     @RequestMapping(value = "/xuetestservice", method = RequestMethod.GET)
     public String hello2() {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForEntity("http://config-server/health", Object.class).getBody().toString();
+        Object test;
+        try {
+            test = restTemplate.getForEntity("http://config-server/user-service-dev.json", Object.class).getBody();
+            return test.toString();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+        return "aa";
+
+    }
+
+    @RequestMapping(value = "/xuetestservice0", method = RequestMethod.GET)
+    public Object hello4() {
+        return restTemplate.getForEntity("http://CONFIG-SERVER/health", Object.class).getBody();
     }
 
     @RequestMapping(value = "/xuetestservice2", method = RequestMethod.GET)
     public String hello3() {
-        RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForEntity("http://comx/xue", Object.class).getBody().toString();
     }
 
