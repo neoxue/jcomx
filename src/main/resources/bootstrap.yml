@@ -14,11 +14,11 @@ eureka:
 
 spring:
   profiles: docker
-  boot:
-      admin:
-        turbine:
-          url: ${TURBINE_URL}
-          clusters: default
+#  boot:
+#      admin:
+#        turbine:
+#          url: ${TURBINE_URL}
+#          clusters: default
 
 server:
   port: ${SERVICE_PORT}

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @ComponentScan("com.gomeplus.comx")
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 public class ComxSpringCloudApplication {
     public static void main(String[] args) {
         long starTime = System.currentTimeMillis();

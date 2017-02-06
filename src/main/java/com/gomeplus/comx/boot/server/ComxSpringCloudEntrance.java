@@ -72,7 +72,13 @@ public class ComxSpringCloudEntrance {
     @RequestMapping(value = "/xuetestservice", method = RequestMethod.GET)
     public String hello2() {
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForEntity("http://COMX/xue", Object.class).getBody().toString();
+        return restTemplate.getForEntity("http://config-server/health", Object.class).getBody().toString();
+    }
+
+    @RequestMapping(value = "/xuetestservice2", method = RequestMethod.GET)
+    public String hello3() {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForEntity("http://comx/xue", Object.class).getBody().toString();
     }
 
 }
