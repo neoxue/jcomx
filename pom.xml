@@ -155,7 +155,7 @@
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava-base -->
         <dependency>
             <groupId>com.google.guava</groupId>
-            <artifactId>guava-base</artifactId>
+            <artifactId>guava</artifactId>
             <version>21.0</version>
         </dependency>
         <!-- end io utils -->
