@@ -1,10 +1,8 @@
 package com.gomeplus.comx.boot;
 
 import com.gomeplus.comx.source.sourcebase.SourceBaseFactory;
-import com.gomeplus.comx.source.sourcebase.UnknownSourceBaseTypeException;
 import com.gomeplus.comx.utils.cache.AbstractCache;
 import com.gomeplus.comx.utils.cache.CacheFactory;
-import com.gomeplus.comx.utils.cache.JedisClusterCache;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 

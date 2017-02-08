@@ -26,6 +26,7 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
         RequestMessage currentRequest   = context.getRequest();
         ReservedParameterManager reservedParameterManager = ReservedParameterManager.fromRequest(currentRequest);
 
+        //TODO 验证这一步骤是不是已经被render
         String targetUrl = this.getResourceUrl(context, sourceOptions.rstr(Source.FIELD_URI), reservedVariables, reservedParameterManager.getReservedQueryParams());
         context.getLogger().debug("source load remote data, method:"+ method + " url:" + targetUrl);
         Map requestData = null;
@@ -37,12 +38,12 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
         }
 
         try {
-        // Url 生成错误 处理
-        Url url = new Url(targetUrl);
-        RequestMessage request = new RequestMessage(url, method, requestData, reservedParameterManager.getFilteredReservedHeaders(), 10);
-
-        // TODO handle exceptions
+            // Url 生成错误 处理
+            Url url = new Url(targetUrl);
+            RequestMessage request = new RequestMessage(url, method, requestData, reservedParameterManager.getFilteredReservedHeaders(), 10);
             return this.doRequest(request, context);
+            // TODO handle exceptions
+            // should not be Exception
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new SourceException(ex);
@@ -51,12 +52,11 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
 
 
 
-    protected String getResourceUrl(Context context, String uri, HashMap reservedVariables, HashMap reservedQueryParams) throws ConfigException{
+    private String getResourceUrl(Context context, String uri, HashMap reservedVariables, HashMap reservedQueryParams) throws ConfigException{
         TinyTemplate tpl = new TinyTemplate(uri);
         String renderedUri = tpl.render(reservedVariables, context);
 
-        //TODO
-        if (!isFullUri(renderedUri)) {
+        if (isFullUri(renderedUri)) {
             return renderedUri;
         }
 
@@ -66,8 +66,7 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
     }
 
     private boolean isFullUri(String renderedUri) {
-        //TODO 判断是否为url
-        return true;
+        return renderedUri.startsWith("http://") || renderedUri.startsWith("https://");
     }
 
     abstract Object doRequest(RequestMessage request,Context context) throws IOException, Exception;

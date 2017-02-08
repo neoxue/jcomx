@@ -60,9 +60,6 @@ public class ComxSpringCloudEntrance {
     }
 
 
-    @Autowired
-    private RestTemplate restTemplate;
-
 
     @RequestMapping(value = "/xue", method = RequestMethod.GET)
     public String hello() {
@@ -71,8 +68,8 @@ public class ComxSpringCloudEntrance {
         return test.toJSONString();
     }
 
-    //@Autowired
-    //RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @RequestMapping(value = "/xuetestservice", method = RequestMethod.GET)
     public String hello2() {

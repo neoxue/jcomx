@@ -27,6 +27,7 @@ public class SourceBaseFactory {
     private static final String TYPE_HTTP               = "http";
     private static final String TYPE_REDIS              = "redis";
     private static final String TYPE_SELF               = "self";
+    private static final String TYPE_SPRINGCLOUD        = "springcloud";
 
     private static final String DEFAULT_TYPE            = "http";
 
@@ -66,9 +67,10 @@ public class SourceBaseFactory {
     protected static AbstractSourceBase populateBaseObject(Config conf) throws UnknownSourceBaseTypeException{
         String type = conf.str(FIELD_TYPE, DEFAULT_TYPE);
         switch (type) {
-            case TYPE_HTTP:  return new HttpSourceBase(conf);
-            case TYPE_SELF:  return new InnerSourceBase(conf);
-            case TYPE_REDIS: return new RedisSourceBase(conf);
+            case TYPE_HTTP:         return new HttpSourceBase(conf);
+            case TYPE_SELF:         return new InnerSourceBase(conf);
+            case TYPE_REDIS:        return new RedisSourceBase(conf);
+            case TYPE_SPRINGCLOUD:  return new SpringCloudSourceBase(conf);
             // TODO 添加其他source base
             default:         throw new UnknownSourceBaseTypeException("unkown source base type:"+ type);
         }

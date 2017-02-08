@@ -164,4 +164,7 @@ public class Url implements ArrayAccessBase{
     public String getUrl() {
         return url;
     }
+    public URI getaURI() {
+        return aURI;
+    }
 }

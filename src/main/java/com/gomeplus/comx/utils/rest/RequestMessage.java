@@ -36,8 +36,6 @@ public class RequestMessage implements ArrayAccessBase{
     protected Integer                   timeout;
 
     // constructors;
-    //public RequestMessage() {
-    //}
     public RequestMessage(Url url, String method, Map<String, Object> data, HashMap<String, String> headerParameters, Integer timeout) {
         this.url                = url;
         this.method             = method;
@@ -147,10 +145,10 @@ public class RequestMessage implements ArrayAccessBase{
 
 
 
-    public void setHeaderParameter(String key, String value) {
+    private void setHeaderParameter(String key, String value) {
         headerParameters.put(key, value);
     }
-    public String getHeaderParameter(String key) {
+    private String getHeaderParameter(String key) {
         return headerParameters.get(key);
     }
 
