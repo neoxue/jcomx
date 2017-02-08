@@ -156,7 +156,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-base</artifactId>
-            <version>r03</version>
+            <version>21.0</version>
         </dependency>
         <!-- end io utils -->
 
