@@ -4,6 +4,9 @@ import com.gomeplus.comx.utils.rest.RequestMessage;
 import com.gomeplus.comx.utils.rest.ResponseMessage;
 import com.gomeplus.comx.schema.Schema;
 import com.gomeplus.comx.utils.log.ComxLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
@@ -30,6 +33,11 @@ public class Context {
     private Integer         count = 0;
     // 先不处理
     //private ScriptLoader scriptLoader;
+
+    // TODO 重构
+    RestTemplate restTemplate;
+
+
 
 
 
@@ -126,6 +134,14 @@ public class Context {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
 }

@@ -9,6 +9,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.EntityUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.*;
@@ -34,6 +35,23 @@ public class RequestMessage implements ArrayAccessBase{
     protected Map<String, Object>       data;
     protected HashMap<String, String>   headerParameters;
     protected Integer                   timeout;
+
+
+    //TODO 重构
+    protected RestTemplate              restTemplate;
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+
+
+
+
+
 
     // constructors;
     public RequestMessage(Url url, String method, Map<String, Object> data, HashMap<String, String> headerParameters, Integer timeout) {

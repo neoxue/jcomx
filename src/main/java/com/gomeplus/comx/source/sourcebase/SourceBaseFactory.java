@@ -71,6 +71,7 @@ public class SourceBaseFactory {
             case TYPE_SELF:         return new InnerSourceBase(conf);
             case TYPE_REDIS:        return new RedisSourceBase(conf);
             case TYPE_SPRINGCLOUD:  return new SpringCloudSourceBase(conf);
+            //case TYPE_SPRINGCLOUD:  return new SpringCloudSourceBase();
             // TODO 添加其他source base
             default:         throw new UnknownSourceBaseTypeException("unkown source base type:"+ type);
         }

@@ -53,6 +53,11 @@ public class ResponseMessage {
         return JSONObject.toJSONString(body, SerializerFeature.WriteMapNullValue);
     }
 
+    public String sendForSpringCloud() {
+        return JSONObject.toJSONString(data);
+    }
+
+
 
 
 

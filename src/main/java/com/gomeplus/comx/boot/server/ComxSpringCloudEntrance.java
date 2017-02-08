@@ -24,9 +24,8 @@ import java.util.HashMap;
  */
 @RestController
 public class ComxSpringCloudEntrance {
-
-
-
+    @Autowired
+    private RestTemplate restTemplate;
 
     @RequestMapping(value = "/**")
     public void boot(HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -42,6 +41,7 @@ public class ComxSpringCloudEntrance {
             JSONObject data = JSON.parseObject(dataStr);
 
             RequestMessage requestMessage = new RequestMessage(url, request.getMethod(), data, headers, 0);
+            requestMessage.setRestTemplate(restTemplate);
             responseMessage = BootStrap.start(requestMessage);
         } catch (UrlException ex) {
             String msg = "handle url error:" + ex.getMessage();
@@ -56,6 +56,7 @@ public class ComxSpringCloudEntrance {
     public void print(ResponseMessage responseMessage, HttpServletResponse response) throws IOException{
         response.setContentType("text/json;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        //response.getWriter().println(responseMessage.sendForSpringCloud());
         response.getWriter().println(responseMessage.send());
     }
 
@@ -68,8 +69,6 @@ public class ComxSpringCloudEntrance {
         return test.toJSONString();
     }
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     @RequestMapping(value = "/xuetestservice", method = RequestMethod.GET)
     public String hello2() {
@@ -81,8 +80,7 @@ public class ComxSpringCloudEntrance {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
-        return "aa";
-
+        return "{'testxue':'failed'}";
     }
 
     @RequestMapping(value = "/xuetestservice0", method = RequestMethod.GET)
@@ -94,5 +92,4 @@ public class ComxSpringCloudEntrance {
     public String hello3() {
         return restTemplate.getForEntity("http://comx/xue", Object.class).getBody().toString();
     }
-
 }

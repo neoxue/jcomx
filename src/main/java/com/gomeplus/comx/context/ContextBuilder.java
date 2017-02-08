@@ -33,6 +33,8 @@ public class ContextBuilder {
 
         logger.setTraceId(traceId);
         context.setTraceId(traceId);
+        //TODO 重构 resttemplate 不应当放在context 当中
+        context.setRestTemplate(request.getRestTemplate());
         // TODO jsonp
         // 在外部
         return context;
