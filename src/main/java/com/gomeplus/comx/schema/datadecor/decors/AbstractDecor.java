@@ -95,6 +95,9 @@ public abstract class AbstractDecor extends ConfBaseNode{
     public void executeChildDecors(Object data, Context context) throws ConfigException, SourceException, DecorException{
         this.sequentialExecuteChildDecors(data, context);
     }
+
+
+
     public void sequentialExecuteChildDecors(Object data, Context context) throws ConfigException, SourceException, DecorException{
         Config children = conf.sub(AbstractDecor.FIELD_DECORS);
         Set<String> keys = children.keys();

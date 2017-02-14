@@ -17,16 +17,17 @@ public interface RefJsonPath {
     default List<Object> getMatchedNodes(Config conf, Object data, Context context) {
         String refJsonPath = conf.str(FIELD_REF_JSON_PATH, null);
         if (null == refJsonPath) {
-            return new ArrayList(Arrays.asList(data));
+            context.getLogger().debug("RefJsonPath: null refJsonPath:" + data.toString());
+            return Arrays.asList(data);
         }
         try {
             Object matchedNode = JSONPath.eval(data, refJsonPath);
             if (matchedNode instanceof List) {
-                context.getLogger().error("RefJsonPaht: matched list:" + matchedNode.toString());
+                context.getLogger().debug("RefJsonPath: matched list:" + matchedNode.toString());
                 return (List)matchedNode;
             } else {
-                context.getLogger().error("RefJsonPaht: is not list:" + matchedNode.toString());
-                return Arrays.asList(matchedNode);
+                context.getLogger().error("RefJsonPath: is not list:" + matchedNode.toString());
+                return Arrays.asList(data);
             }
         } catch(Exception ex){
             context.getLogger().error("Decor Eachdecor, refJsonPath error:" + ex.getMessage() + " refJsonPath:"+ refJsonPath+ ", data:" + data);

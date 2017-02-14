@@ -23,14 +23,15 @@ public class FixedDecor extends AbstractDecor {
 
     // TODO 确认 loaded 是否 一定是 json, 是否可以是 literal value
     public void doDecorate(Object data, Context context) throws ConfigException{
-        JSONObject loaded;
         String field        = conf.str (FIELD_FIELD, "");
-        if (field.isEmpty()) {
-            loaded   = conf.rsub(FIELD_FIXED_DATA).rawData();
-        } else {
-            loaded   = new JSONObject();
-            loaded.put(field, conf.rsub(FIELD_FIXED_DATA).rawData());
-        }
+
+        JSONObject loaded = field.isEmpty()? conf.rsub(FIELD_FIXED_DATA).rawData(): new JSONObject() {{ put(field, conf.rsub(FIELD_FIXED_DATA).rawData()); }};
+        //if (field.isEmpty()) {
+        //    loaded   = conf.rsub(FIELD_FIXED_DATA).rawData();
+        //} else {
+        //    loaded   = new JSONObject();
+        //    loaded.put(field, conf.rsub(FIELD_FIXED_DATA).rawData());
+        //}
 
         if (data instanceof Map) {
             for (String key: loaded.keySet()) {
