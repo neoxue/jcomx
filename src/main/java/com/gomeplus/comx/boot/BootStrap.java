@@ -29,6 +29,7 @@ public class BootStrap {
             Handler handler = new Handler();
             handler.handle(context);
         } catch(Exception ex){
+            //TODO 处理各种exception
             // 只处理初始化错误，业务错误在handler 处理
             // 构建初始环境异常 打印日志，返回服务不可用
             ex.printStackTrace();

@@ -21,6 +21,7 @@ public class FixedDecor extends AbstractDecor {
         super(conf);
     }
 
+    // TODO 确认 loaded 是否 一定是 json, 是否可以是 literal value
     public void doDecorate(Object data, Context context) throws ConfigException{
         JSONObject loaded;
         String field        = conf.str (FIELD_FIELD, "");

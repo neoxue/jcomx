@@ -36,7 +36,7 @@ public class ComxConfLoader {
     }
 
     public static void initialize()  throws ConfigException{
-        COMX_HOME = "/www/comx-conf";
+        COMX_HOME           = "/www/comx-conf";
         String comxConfFile = COMX_HOME + "/comx.conf.json";
         comxConf            = com.gomeplus.comx.utils.config.Loader.fromJsonFile(comxConfFile);
         sourceBaseFactory   = SourceBaseFactory.fromConf(comxConf);

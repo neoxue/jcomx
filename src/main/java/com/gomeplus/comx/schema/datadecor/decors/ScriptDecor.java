@@ -1,6 +1,7 @@
 package com.gomeplus.comx.schema.datadecor.decors;
 
 import com.alibaba.fastjson.JSONPath;
+import com.gomeplus.comx.boot.ComxConfLoader;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.datadecor.DecorException;
 import com.gomeplus.comx.utils.config.Config;
@@ -10,10 +11,7 @@ import groovy.lang.GroovyShell;
 import groovy.util.GroovyScriptEngine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -21,7 +19,7 @@ import java.util.Map;
  * Created by xue on 1/17/17.
  * TODO 勉强能用 需要测试用例
  */
-public class ScriptDecor extends AbstractDecor{
+public class ScriptDecor extends AbstractDecor implements RefJsonPath{
     public ScriptDecor(Config conf) {
         super(conf);
     }
@@ -33,8 +31,8 @@ public class ScriptDecor extends AbstractDecor{
 
     static {
         try {
-            // TODO 从comxconf 里面读取
-            groovyScriptEngine = new GroovyScriptEngine("/www/comx-conf/groovy-scripts/");
+            String groovyHome = ComxConfLoader.getComxHome() + "/groovy-scripts/";
+            groovyScriptEngine = new GroovyScriptEngine(groovyHome);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +40,8 @@ public class ScriptDecor extends AbstractDecor{
 // TODO 暂时只支持 script, lambda 再想办法
     public void doDecorate(Object data, Context context) throws DecorException{
         context.getLogger().error("Decor ScriptDecor: none:" + conf.rawData());
-        ArrayList matchedNodes = this.getMatchedNodes(data, context);
+        List matchedNodes = getMatchedNodes(conf, data, context);
+        context.getLogger().debug("Decor ScriptDecor: matched nodes:" + matchedNodes.toString());
 
         try {
             String scriptName = conf.str("jscript", "");
@@ -73,34 +72,6 @@ public class ScriptDecor extends AbstractDecor{
             // 有以下错误
             //(ResourceException | ScriptException | InstantiationException | IllegalAccessException e1)
             throw new DecorException(ex);
-        }
-    }
-
-
-
-    /**
-     * 记录日志需要
-     * TODO 和eachdecor 一致， 需要抽象出来
-     * TODO 需要验证 refjsonpath 效果一致
-     * @param data
-     * @param context 记录日志
-     * @return ArrayList
-     */
-    protected ArrayList getMatchedNodes(Object data, Context context){
-        String refJsonPath = conf.str(EachDecor.FIELD_REF_JSON_PATH, null);
-        if (null == refJsonPath) {
-            return new ArrayList(Arrays.asList(data));
-        }
-        try {
-            Object matchedNode = JSONPath.eval(data, refJsonPath);
-            if (matchedNode instanceof ArrayList) {
-                return (ArrayList) matchedNode;
-            } else {
-                return new ArrayList(Arrays.asList(matchedNode));
-            }
-        } catch(Exception ex){
-            context.getLogger().warn("Decor Eachdecor, refJsonPath error, refJsonPath:"+ refJsonPath+ ", data:" + data);
-            return new ArrayList(Arrays.asList(data));
         }
     }
 

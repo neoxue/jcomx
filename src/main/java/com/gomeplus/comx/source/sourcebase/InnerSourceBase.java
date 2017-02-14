@@ -36,6 +36,8 @@ public class InnerSourceBase extends AbstractRequestBasedSourceBase{
 
             context.getLogger().debug("" + conf.rawData());
             context.getLogger().debug("InnerSourceBase :" + new JSONObject((Map)data).toJSONString());
+            // TODO 验证逻辑
+            if (((Map) data).isEmpty()) return null;
             return data;
     }
     public String getUrlPrefix(Context context) {

@@ -34,6 +34,7 @@ public class Handler {
             rootdecor.decorate(data, context);
             ResponseMessage responseMessage = context.getResponse();
             responseMessage.setData(data);
+            responseMessage.setMessage("");
         } catch (ConfigException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
