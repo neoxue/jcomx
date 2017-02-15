@@ -39,6 +39,8 @@ public class BootStrap {
 
         ResponseMessage response = context.getResponse();
         response.setDebug(new JSONArray((List)context.getLogger().getDebugInfo()));
+        // TODO 处理 jsonp
+
 
         return context.getResponse();
     }

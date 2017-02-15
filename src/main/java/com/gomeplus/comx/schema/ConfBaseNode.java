@@ -7,7 +7,6 @@ import com.gomeplus.comx.utils.config.Config;
  */
 public class ConfBaseNode {
     protected Config conf;
-    protected Config parentNode;
 
     public ConfBaseNode(Config conf) {
         this.conf = conf;
