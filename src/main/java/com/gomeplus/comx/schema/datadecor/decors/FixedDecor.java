@@ -26,17 +26,11 @@ public class FixedDecor extends AbstractDecor {
         String field        = conf.str (FIELD_FIELD, "");
 
         JSONObject loaded = field.isEmpty()? conf.rsub(FIELD_FIXED_DATA).rawData(): new JSONObject() {{ put(field, conf.rsub(FIELD_FIXED_DATA).rawData()); }};
-        //if (field.isEmpty()) {
-        //    loaded   = conf.rsub(FIELD_FIXED_DATA).rawData();
-        //} else {
-        //    loaded   = new JSONObject();
-        //    loaded.put(field, conf.rsub(FIELD_FIXED_DATA).rawData());
-        //}
 
         if (data instanceof Map) {
             for (String key: loaded.keySet()) {
                 Object value = loaded.get(key);
-                context.getLogger().error("FixedDecor: merge key :" + key + " value:" + value);
+                context.getLogger().info("FixedDecor: merge key :" + key + " value:" + value);
                 ((Map)data).put(key, loaded.get(key));
             }
         } else {

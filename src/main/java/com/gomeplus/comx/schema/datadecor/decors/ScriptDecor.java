@@ -1,6 +1,5 @@
 package com.gomeplus.comx.schema.datadecor.decors;
 
-import com.alibaba.fastjson.JSONPath;
 import com.gomeplus.comx.boot.ComxConfLoader;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.schema.datadecor.DecorException;
@@ -37,7 +36,6 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
             e.printStackTrace();
         }
     }
-// TODO 暂时只支持 script, lambda 再想办法
     public void doDecorate(Object data, Context context) throws DecorException{
         context.getLogger().error("Decor ScriptDecor: none:" + conf.rawData());
         List matchedNodes = getMatchedNodes(conf, data, context);
@@ -65,7 +63,7 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
                     shell.evaluate(lambda);
                 }
             } else {
-                context.getLogger().error("Decor, ScriptDecor script or lambda empty");
+                context.getLogger().error("Decor, ScriptDecor jscript or jlambda empty");
             }
             // do nothing
         } catch (Exception ex) {
@@ -74,5 +72,4 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
             throw new DecorException(ex);
         }
     }
-
 }
