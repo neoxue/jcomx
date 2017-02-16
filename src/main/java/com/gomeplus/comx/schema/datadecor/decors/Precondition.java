@@ -12,7 +12,7 @@ import java.util.HashMap;
  * 一个lambda 表达式
  * refjsonpath 应当为每一个过滤的 node 做计算
  * 非 refjsonpath 则过一次
- *
+ * TODO 脚本出现错误 捕获不处理还是全局中断
  */
 public class Precondition {
     public static Boolean execute(String instruction, Object data, Context context) {

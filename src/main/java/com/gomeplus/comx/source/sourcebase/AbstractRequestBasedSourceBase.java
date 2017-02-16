@@ -43,9 +43,11 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
             Url url = new Url(targetUrl);
             RequestMessage request = new RequestMessage(url, method, requestData, reservedParameterManager.getFilteredReservedHeaders(context), timeout);
             return this.doRequest(request, context);
+        } catch (SourceException ex) {
+            throw ex;
+        } catch (Exception ex) {
             // TODO handle exceptions
             // should not be Exception
-        } catch (Exception ex) {
             ex.printStackTrace();
             throw new SourceException(ex);
         }

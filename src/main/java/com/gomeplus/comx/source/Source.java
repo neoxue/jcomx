@@ -79,10 +79,11 @@ public class Source {
         if (result != null)     return result;
         Config backupConf = conf.sub(Source.FIELD_BACKUP);
         if (backupConf.rawData().isEmpty()) {
-            if (ex != null)     throw new SourceException(ex);
-            context.getLogger().error("Source loading error URI:" + this.getUri() + " message:" + ex.getMessage());
-            context.getLogger().error(ex);
-            context.getLogger().error("Source loading error & backupConf empty; URI:" + this.getUri());
+            if (ex != null) {
+                context.getLogger().error("Source loading error & backupConf empty; URI:" + this.getUri());
+                if (ex instanceof SourceException)  throw (SourceException) ex;
+                else                                throw new SourceException(ex);
+            }
             return null;
         }
         Source backSource = new Source(backupConf);

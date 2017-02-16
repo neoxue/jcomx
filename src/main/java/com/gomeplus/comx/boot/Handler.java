@@ -8,6 +8,7 @@ import com.gomeplus.comx.schema.datadecor.DecorException;
 import com.gomeplus.comx.schema.datadecor.decors.AbstractDecor;
 import com.gomeplus.comx.schema.datadecor.DecorFactory;
 import com.gomeplus.comx.schema.datadecor.decors.UnknownDecorTypeException;
+import com.gomeplus.comx.source.SourceBizException;
 import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.config.ConfigException;
 import com.gomeplus.comx.utils.rest.ResponseMessage;
@@ -21,13 +22,13 @@ public class Handler {
     public void handle(Context context) {
         try {
             // 记录进入日志
-            Url url         = context.getRequest().getUrl();
+            Url url = context.getRequest().getUrl();
             // 规范约定应当为map形式， 但最终并不强制要求是
             JSONObject data = new JSONObject();
             context.getLogger().info("Handle Url:" + url.getUrl());
             String method = context.getRequest().getMethod();
 
-            Schema schema   = SchemaLoader.load(url.get("path").toString(), method.toLowerCase());
+            Schema schema = SchemaLoader.load(url.get("path").toString(), method.toLowerCase());
             context.setSchema(schema);
             // TODO 处理登录验证
             AbstractDecor rootdecor = DecorFactory.create(schema.getConf(), AbstractDecor.TYPE_ROOT);
@@ -35,18 +36,28 @@ public class Handler {
             ResponseMessage responseMessage = context.getResponse();
             responseMessage.setData(data);
             responseMessage.setMessage("");
+        } catch (SourceBizException ex) {
+            ex.printStackTrace();
+            context.getLogger().error(ex.getMessage());
+            context.getResponse().setMessage(ex.getMessage());
+            context.getResponse().setCode(ex.getStatusCode());
+
+            context.getLogger().error("in sourcebiz");
         } catch (ConfigException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
+            context.getLogger().error("in config ex");
         } catch (SourceException ex){
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
+            context.getLogger().error("in source ex");
         } catch (DecorException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
+            context.getLogger().error("in decor ex");
         }
     }
 }

@@ -3,6 +3,7 @@ package com.gomeplus.comx.utils.rest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
+import com.gomeplus.comx.source.SourceBizException;
 import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.rest.clients.ApacheHttpClient;
 import com.gomeplus.comx.utils.rest.clients.HttpClientX;
@@ -101,19 +102,26 @@ public class RequestMessage implements ArrayAccessBase{
         // TODO 需要将错误码和信息 throw 出去
         // TODO 暂时用SourceExeption 之后将这一部分抽出去
         try {
-            HttpResponse httpResponse = ApacheHttpClient.request(targetUrl, method.toUpperCase(), requestData, headerParameters, timeout);
-            int status                = httpResponse.getStatusLine().getStatusCode();
-            HttpEntity entity         = httpResponse.getEntity();
-            String responseBody       = (entity != null) ? EntityUtils.toString(entity) : null;
+            HttpResponse httpResponse   = ApacheHttpClient.request(targetUrl, method.toUpperCase(), requestData, headerParameters, timeout);
+            int status                  = httpResponse.getStatusLine().getStatusCode();
+            HttpEntity entity           = httpResponse.getEntity();
+            String responseBody         = (entity != null) ? EntityUtils.toString(entity) : null;
+
             if (status >= 200 && status < 300) {
                 JSONObject responseBodyJson = JSON.parseObject(responseBody);
                 return new ResponseMessage(responseBodyJson.get("data"), responseBodyJson.get("message").toString(), status);
             } else {
-                context.getLogger().error("loading http source :" + targetUrl + " error status code:" + status);
-                throw new ClientProtocolException("Unexpected response status: " + status);
+                context.getLogger().error("Loading URI:" + targetUrl + " status:" + status + " responseBody:" + responseBody);
+                JSONObject responseBodyJson;
+                try {
+                    responseBodyJson = JSON.parseObject(responseBody);
+                } catch (Exception ex) {
+                    // response body info
+                    throw new SourceBizException("", status);
+                }
+                throw new SourceBizException(responseBodyJson.get("message").toString(), status);
             }
-        } catch (Exception ex) {
-            // TODO bizness exception
+        } catch (IOException ex) {
             context.getLogger().error(ex.getMessage());
             throw new SourceException(ex);
         }

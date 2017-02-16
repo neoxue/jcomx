@@ -45,6 +45,8 @@ public class EachDecor extends AbstractDecor implements RefJsonPath{
             }
         });
         if (exceptions.isEmpty()) return;
+        Exception ex = exceptions.get(0);
+        if (ex instanceof SourceException) throw (SourceException) ex;
         throw new SourceException(exceptions.get(0));
     }
 
