@@ -3,6 +3,7 @@ package com.gomeplus.comx.utils.rest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
+import com.gomeplus.comx.source.SourceException;
 import com.gomeplus.comx.utils.rest.clients.ApacheHttpClient;
 import com.gomeplus.comx.utils.rest.clients.HttpClientX;
 import org.apache.http.HttpEntity;
@@ -92,17 +93,19 @@ public class RequestMessage implements ArrayAccessBase{
      * @param context 当前context
      * @return ResponseMessage
      */
-    public ResponseMessage execute(Context context) throws IOException {
+    public ResponseMessage execute(Context context) throws SourceException {
         String targetUrl   = url.getUrl();
         String requestData = (null != data)?new JSONObject(data).toJSONString():"";
 
         // 执行 HttpClient request 函数
+        // TODO 需要将错误码和信息 throw 出去
+        // TODO 暂时用SourceExeption 之后将这一部分抽出去
         try {
             HttpResponse httpResponse = ApacheHttpClient.request(targetUrl, method.toUpperCase(), requestData, headerParameters, timeout);
-            int status = httpResponse.getStatusLine().getStatusCode();
+            int status                = httpResponse.getStatusLine().getStatusCode();
+            HttpEntity entity         = httpResponse.getEntity();
+            String responseBody       = (entity != null) ? EntityUtils.toString(entity) : null;
             if (status >= 200 && status < 300) {
-                HttpEntity entity = httpResponse.getEntity();
-                String responseBody = (entity != null) ? EntityUtils.toString(entity) : null;
                 JSONObject responseBodyJson = JSON.parseObject(responseBody);
                 return new ResponseMessage(responseBodyJson.get("data"), responseBodyJson.get("message").toString(), status);
             } else {
@@ -112,7 +115,7 @@ public class RequestMessage implements ArrayAccessBase{
         } catch (Exception ex) {
             // TODO bizness exception
             context.getLogger().error(ex.getMessage());
-            throw ex;
+            throw new SourceException(ex);
         }
     }
 

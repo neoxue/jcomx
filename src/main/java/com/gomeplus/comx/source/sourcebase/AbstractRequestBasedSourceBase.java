@@ -70,7 +70,7 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
         return renderedUri.startsWith("http://") || renderedUri.startsWith("https://");
     }
 
-    abstract Object doRequest(RequestMessage request,Context context) throws IOException, Exception;
+    abstract Object doRequest(RequestMessage request,Context context) throws SourceException;
     abstract String getUrlPrefix(Context context) throws ConfigException;
 
 

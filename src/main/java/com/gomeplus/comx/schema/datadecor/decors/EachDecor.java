@@ -31,9 +31,21 @@ public class EachDecor extends AbstractDecor implements RefJsonPath{
         source = new Source(conf.rsub(EachDecor.FIELD_SOURCE));
         field  = conf.str(EachDecor.FIELD_FIELD,  "");
 
-        for (Object ref: matchedNodes) {
-            this.decorateOneNode(ref, data, context);
-        }
+        // TODO 针对简单source load 情况， 内部应不会产生数据冲突， 我们可以采用 parallel 或者 fiber 形式都可以
+        //for (Object ref: matchedNodes) {
+        //    this.decorateOneNode(ref, data, context);
+        //}
+        // 其实ref 是一个 map (之后在最前面约束ref 为 map)
+        ArrayList<Exception> exceptions = new ArrayList<>();
+        matchedNodes.parallelStream().forEach(ref -> {
+            try {
+                decorateOneNode(ref, data, context);
+            } catch(Exception ex) {
+                exceptions.add(ex);
+            }
+        });
+        if (exceptions.isEmpty()) return;
+        throw new SourceException(exceptions.get(0));
     }
 
 
