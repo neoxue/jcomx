@@ -95,7 +95,7 @@ public class ComxSpringCloudEntrance {
             case 415: throw new C415Exception(message);
             case 422: throw new C422Exception(message);
             case 500: throw new C500Exception(message);
-            default:throw new C301Exception(message);
+            default:throw new C500Exception(message);
         }
     }
 
