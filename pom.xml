@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <artifactId>cloud-comx</artifactId>
+    <artifactId>bs-service-comx</artifactId>
     <packaging>jar</packaging>
-    <name>cloud-comx</name>
+    <name>bs-service-comx</name>
     <!--
     <groupId>cn.com.mx</groupId>
     <artifactId>jcomx</artifactId>
@@ -23,8 +23,8 @@
     </properties>
 
     <parent>
-        <groupId>com.erdaoya</groupId>
-        <artifactId>spring-cloud-example-parent</artifactId>
+        <groupId>com.gomeplus.oversea</groupId>
+        <artifactId>bs-cloud-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <dependencies>

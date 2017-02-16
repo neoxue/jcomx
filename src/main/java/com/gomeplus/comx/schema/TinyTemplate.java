@@ -45,22 +45,32 @@ public class TinyTemplate {
     // TODO 优化
     // 现在的做法是，令vars 以及之后每一层都 imlements Map;
     // fastjson JSONPath 或可以考虑
+    // TODO 确认行为，记录日志，抛出异常
+    //throw new TinyTemplateException("");
     public String replace(String matched, Context context) {
         context.getLogger().trace("Tiny template replacing:" + matched);
         String[] varSections = matched.split("\\.");
         Object matchedValue = this.vars;
 
+
+
+
         for (String key: varSections) {
+            if (null == matchedValue) {
+                context.getLogger().warn("Tiny template failed: matched null, varSection:" + key);
+                return "";
+            }
             if (matchedValue instanceof Map) {
                 matchedValue = ((Map)matchedValue).get(key);
             } else {
                 context.getLogger().warn("Tiny template failed: matched" + matchedValue + " varSection:" + key);
                 return "";
-                // TODO 确认行为，记录日志，抛出异常
-                //throw new TinyTemplateException("");
             }
         }
-        context.getLogger().trace("Tiny template got:" + matchedValue.toString());
-        return matchedValue.toString();
+        if (null != matchedValue) {
+            context.getLogger().trace("Tiny template got:" + matchedValue.toString());
+            return matchedValue.toString();
+        }
+        return "";
     }
 }

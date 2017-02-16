@@ -8,8 +8,10 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
 import groovy.util.GroovyScriptEngine;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 
@@ -18,6 +20,7 @@ import java.util.*;
  * Created by xue on 1/17/17.
  * TODO 勉强能用 需要测试用例
  */
+@Slf4j
 public class ScriptDecor extends AbstractDecor implements RefJsonPath{
     public ScriptDecor(Config conf) {
         super(conf);
@@ -30,16 +33,20 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
 
     static {
         try {
-            String groovyHome = ComxConfLoader.getComxHome() + "/groovy-scripts/";
-            groovyScriptEngine = new GroovyScriptEngine(groovyHome);
+            Properties prop     = new Properties();
+            InputStream in      = ComxConfLoader.class.getClassLoader().getResourceAsStream("comx.properties");
+            prop.load(in);
+            String groovyHome   = prop.getProperty("comx_home") + "/groovy-scripts/";
+            groovyScriptEngine  = new GroovyScriptEngine(groovyHome);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("fail to load properties!", e);
+            throw new RuntimeException(e);
         }
     }
+
     public void doDecorate(Object data, Context context) throws DecorException{
-        context.getLogger().error("Decor ScriptDecor: none:" + conf.rawData());
+        context.getLogger().error("Decor ScriptDecor: init:" + conf.rawData());
         List matchedNodes = getMatchedNodes(conf, data, context);
-        context.getLogger().debug("Decor ScriptDecor: matched nodes:" + matchedNodes.toString());
 
         try {
             String scriptName = conf.str("jscript", "");
