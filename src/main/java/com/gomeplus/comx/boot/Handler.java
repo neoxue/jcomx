@@ -36,28 +36,27 @@ public class Handler {
             ResponseMessage responseMessage = context.getResponse();
             responseMessage.setData(data);
             responseMessage.setMessage("");
+            context.getResponse().setCode(200);
         } catch (SourceBizException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
             context.getResponse().setCode(ex.getStatusCode());
-
-            context.getLogger().error("in sourcebiz");
         } catch (ConfigException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
-            context.getLogger().error("in config ex");
+            context.getResponse().setCode(500);
         } catch (SourceException ex){
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
-            context.getLogger().error("in source ex");
+            context.getResponse().setCode(500);
         } catch (DecorException ex) {
             ex.printStackTrace();
             context.getLogger().error(ex.getMessage());
             context.getResponse().setMessage(ex.getMessage());
-            context.getLogger().error("in decor ex");
+            context.getResponse().setCode(500);
         }
     }
 }
