@@ -1,5 +1,7 @@
 package com.gomeplus.comx.source.sourcebase;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.boot.server.ComxSpringCloudApplication;
 import com.gomeplus.comx.context.Context;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,10 +70,9 @@ public class SpringCloudSourceBase extends AbstractRequestBasedSourceBase{
 
         ResponseEntity<Object> responseEntity = restTemplate.exchange(aURI, HttpMethod.resolve(method.toUpperCase()), entity, Object.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            return new JSONObject((Map) responseEntity.getBody());
+            return responseEntity.getBody();
         } else {
             throw new SourceBizException(responseEntity.getBody().toString(), Integer.parseInt(responseEntity.getStatusCode().toString()));
         }
-        //return restTemplate.exchange(requestMessage.getUrl().getaURI(), HttpMethod.GET, entity, Object.class).getBody();
     }
 }
