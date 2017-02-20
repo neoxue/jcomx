@@ -25,6 +25,7 @@ public class RequestMessage implements ArrayAccessBase{
     public static final String METHOD_DELETE   = "delete";
     public static final String METHOD_PUT      = "put";
     private static final String HEADER_FIELD_TRACE_ID           = "X-Gomeplus-Trace-Id";
+    private static final String HEADER_FIELD_TRACE_ID_LOWERCASE = "x-gomeplus-trace-id";
     private static final String HEADER_FIELD_X_FORWARDED_FOR    = "X-Forwarded-For";
     private static final String QUERY_FIELD_TRACE_ID            = "traceId";
     private static final String DEFAULT_TRACE_ID_PREFIX         = "COMX";
@@ -153,6 +154,8 @@ public class RequestMessage implements ArrayAccessBase{
         String traceId = (String)url.getQuery().get(QUERY_FIELD_TRACE_ID);
         if (null != traceId) return traceId;
         traceId = getHeaderParameter(HEADER_FIELD_TRACE_ID);
+        if (null != traceId) return traceId;
+        traceId = getHeaderParameter(HEADER_FIELD_TRACE_ID_LOWERCASE);
         if (null != traceId) return traceId;
         return "";
     }

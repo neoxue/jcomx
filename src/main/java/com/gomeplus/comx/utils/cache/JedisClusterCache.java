@@ -13,7 +13,7 @@ import java.util.Set;
  * Created by xue on 12/29/16.
  *
  * Pass config and return Single JedisCluster
- * for Jedis pool is multithread-safe, it's not neccessary to get a JedisCluster pool;
+ * since Jedis pool is multithread-safe, it's not neccessary to get a JedisCluster pool;
  * 并封装 不同版本jedis 不一样 函数
  */
 public class JedisClusterCache extends AbstractCache{

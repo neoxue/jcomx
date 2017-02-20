@@ -99,7 +99,7 @@ public class Source {
             String uri          = getUri();
             TinyTemplate tpl    = new TinyTemplate(uri);
             reservedVariables.put(RESERVED_TPL_VAR_REQUEST, context.getRequest());
-            String renderedUri  = tpl.render(reservedVariables, context);
+            String renderedUri  = tpl.render(reservedVariables, context, true);
             reservedVariables.put(RESERVED_RENDERED_URI, renderedUri);
 
             Object data = loadCache(context, renderedUri);
