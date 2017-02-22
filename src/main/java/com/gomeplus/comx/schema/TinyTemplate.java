@@ -46,7 +46,7 @@ public class TinyTemplate {
         return sb.toString();
     }
 
-    private String replace(String matched, HashMap vars, Boolean enableUrlEncode, Context context) {
+    public String replace(String matched, HashMap vars, Boolean enableUrlEncode, Context context) {
         context.getLogger().trace("Tiny template replacing:" + matched);
         String[] varSections = matched.split("\\.");
         Object matchedValue = vars;

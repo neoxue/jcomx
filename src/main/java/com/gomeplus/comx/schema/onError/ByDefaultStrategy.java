@@ -19,7 +19,7 @@ public class ByDefaultStrategy extends Strategy {
     @Override
     public Object handleSourceException(Exception ex, Context context) throws Exception{
         context.getLogger().error("OnError ByDefault Strategy, caught exception, return value by default. error:" + ex.getMessage() + "; class:" + ex.getClass());
-        return this.conf.sub(DEFAULT_VALUE_FIELD).rawData();
+        return this.conf.rawData().get(DEFAULT_VALUE_FIELD);
     }
 
     @Override
