@@ -64,7 +64,6 @@ public abstract class AbstractDecor extends ConfBaseNode{
         context.setLocalCacheEnabled(conf.bool(FIELD_LOCAL_CACHE_ENABLED, false));
         context.getLogger().debug("Execute Decor:" + this.getType() +  " " + getComxId());
         try {
-            // TODO before decorate : precondition node
             // DecorCache decorCache = DecorCache.fromConf(conf.sub(AbstractDecor.FIELD_CACHE), context, data);
             // TODO 处理 decorCache withChildren & withOutChildren
 

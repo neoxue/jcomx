@@ -45,7 +45,7 @@ public class SpringCloudSourceBase extends AbstractRequestBasedSourceBase{
         Map<String, Object> data                = requestMessage.getData();
         HttpHeaders headers                     = new HttpHeaders();
 
-        requestheaders.remove("Accept");
+        // TODO accept
         headers.setAll(requestheaders);
         headers.setContentType(MediaType.APPLICATION_JSON);
 

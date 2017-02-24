@@ -118,11 +118,22 @@ public class ComxSpringCloudEntrance {
 
 
     @RequestMapping(value = "/xue", method = RequestMethod.GET)
-    public String hello() {
+    public String hello(HttpServletRequest request) {
         JSONObject test = new JSONObject();
         test.put("testxuekey", "testxuevalue");
         return test.toJSONString();
     }
+    @RequestMapping(value = "/xue0", method = RequestMethod.GET)
+    public Object hello0(HttpServletRequest request) {
+        JSONObject test = new JSONObject();
+        test.put("testxuekey", "testxuevalue");
+        return test;
+    }
+
+
+
+
+
 
 
     @RequestMapping(value = "/xuetestservice", method = RequestMethod.GET)

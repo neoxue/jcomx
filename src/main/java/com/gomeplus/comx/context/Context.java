@@ -22,6 +22,7 @@ public class Context {
     private ResponseMessage         response;
     private ComxLogger              logger;
     private ContextCache            cache;
+    // concurrent hashmap
     private HashMap<String, Object> localCache = new HashMap<>();
     private Boolean                 localCacheEnabled = false;
 

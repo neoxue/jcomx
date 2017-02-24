@@ -38,23 +38,19 @@ public class Handler {
             responseMessage.setMessage("");
             context.getResponse().setCode(200);
         } catch (SourceBizException ex) {
-            ex.printStackTrace();
-            context.getLogger().error(ex.getMessage());
+            context.getLogger().error(ex);
             context.getResponse().setMessage(ex.getMessage());
             context.getResponse().setCode(ex.getStatusCode());
         } catch (ConfigException ex) {
-            ex.printStackTrace();
-            context.getLogger().error(ex.getMessage());
+            context.getLogger().error(ex);
             context.getResponse().setMessage(ex.getMessage());
             context.getResponse().setCode(500);
         } catch (SourceException ex){
-            ex.printStackTrace();
-            context.getLogger().error(ex.getMessage());
+            context.getLogger().error(ex);
             context.getResponse().setMessage(ex.getMessage());
             context.getResponse().setCode(500);
         } catch (DecorException ex) {
-            ex.printStackTrace();
-            context.getLogger().error(ex.getMessage());
+            context.getLogger().error(ex);
             context.getResponse().setMessage(ex.getMessage());
             context.getResponse().setCode(500);
         }

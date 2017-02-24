@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public class TinyTemplate {
     public static String ENCODING = "UTF-8";
     protected String  tpl;
+    private static Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
     public TinyTemplate(String tpl) {
         this.tpl = tpl;
@@ -31,9 +32,7 @@ public class TinyTemplate {
 
     // TODO 影响效率且不好调试，需要变更 java regex 库
     public String render(HashMap vars, Context context, Boolean enableUrlEncode) {
-        String ps = "\\{(.*?)\\}";
-        Pattern p = Pattern.compile(ps);
-        Matcher m = p.matcher(tpl);
+        Matcher m = pattern.matcher(tpl);
         StringBuffer sb = new StringBuffer();
         while (m.find()){
             MatchResult mr = m.toMatchResult();
