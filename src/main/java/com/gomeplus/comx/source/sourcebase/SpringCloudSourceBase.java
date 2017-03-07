@@ -38,14 +38,12 @@ public class SpringCloudSourceBase extends AbstractRequestBasedSourceBase{
     // return restTemplate.getForEntity("http://config-server/user-service-dev.json", Object.class).getBody();
     // 这个时候 request headers 应当已经被处理好保留字段，只需要封装入client
     //TODO timeout 应当于外部已经被设定
-    // rest template 当传递 accept 为 */* 时，返回不能正确解析
     public Object doRequest(RequestMessage requestMessage, Context context) throws SourceException{
         String method                           = requestMessage.getMethod();
         HashMap<String, String> requestheaders  = requestMessage.getHeaderParameters();
         Map<String, Object> data                = requestMessage.getData();
         HttpHeaders headers                     = new HttpHeaders();
 
-        // TODO accept
         headers.setAll(requestheaders);
         headers.setContentType(MediaType.APPLICATION_JSON);
 

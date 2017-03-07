@@ -38,7 +38,6 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
         RequestMessage currentRequest   = context.getRequest();
         ReservedParameterManager reservedParameterManager = ReservedParameterManager.fromRequest(currentRequest);
 
-        //TODO 验证这一步骤是不是已经被render
         String targetUrl = this.getResourceUrl(context, sourceOptions.rstr(Source.FIELD_URI), reservedVariables, reservedParameterManager.getReservedQueryParams());
         context.getLogger().debug("source load remote data, method:"+ method + " targetUrl:" + targetUrl);
         Map requestData = null;
@@ -57,9 +56,6 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
         } catch (SourceException ex) {
             throw ex;
         } catch (Exception ex) {
-            // TODO handle exceptions
-            // should not be Exception
-            ex.printStackTrace();
             throw new SourceException(ex);
         }
     }
@@ -67,13 +63,18 @@ abstract public class AbstractRequestBasedSourceBase extends AbstractSourceBase{
 
 
     private String getResourceUrl(Context context, String uri, HashMap reservedVariables, HashMap reservedQueryParams) throws ConfigException{
-        TinyTemplate tpl = new TinyTemplate(uri);
-        String renderedUri = tpl.render(reservedVariables, context, true);
+        String renderedUri;
+
+        if (reservedVariables.containsKey(Source.RESERVED_RENDERED_URI)) {
+            renderedUri = (String)reservedVariables.get(Source.RESERVED_RENDERED_URI);
+        } else {
+            TinyTemplate tpl = new TinyTemplate(uri);
+            renderedUri = tpl.render(reservedVariables, context, true);
+        }
 
         if (isFullUri(renderedUri)) {
             return renderedUri;
         }
-
         // TODO url form url;
         renderedUri = this.getUrlPrefix(context) + renderedUri;
         return renderedUri;
