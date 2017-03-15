@@ -64,7 +64,7 @@ public class ComxSpringCloudEntrance {
     }
 
     public void print(ResponseMessage responseMessage, HttpServletResponse response) throws IOException, RestfullBaseException {
-        response.setContentType("text/json;charset=utf-8");
+        response.setContentType("application/json;charset=UTF-8");
         Integer statusCode = responseMessage.getCode();
         if (statusCode.equals(200)) {
             response.getWriter().println(responseMessage.sendForSpringCloud());

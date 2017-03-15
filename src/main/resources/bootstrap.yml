@@ -1,6 +1,14 @@
 spring:
   application:
     name: comx
+  cloud:
+      config:
+        name: bs-api-gateway
+        failFast: true
+        discovery:
+          enabled: true
+          serviceId: bs-server-config
+          
 server:
   port: 9019
 
