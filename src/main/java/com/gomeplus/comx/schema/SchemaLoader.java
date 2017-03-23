@@ -7,6 +7,8 @@ import com.gomeplus.comx.utils.config.Loader;
 
 /**
  * Created by xue on 12/16/16.
+ * TODO comx 当中文件操作应当 替换为操作系统无关的常量 IO 包中 slash
+ *
  */
 public class SchemaLoader {
 

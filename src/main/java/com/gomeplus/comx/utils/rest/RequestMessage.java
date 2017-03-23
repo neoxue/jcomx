@@ -89,7 +89,7 @@ public class RequestMessage implements ArrayAccessBase{
 
 
     /**
-     * 传入context 是为了日共日志功能
+     * 传入context 是为了日共日志功能, 原则上之后这部分应当去除
      * 类原则上可替换
      * 抛出异常还是由业务检查抛出异常？
      * @param context 当前context

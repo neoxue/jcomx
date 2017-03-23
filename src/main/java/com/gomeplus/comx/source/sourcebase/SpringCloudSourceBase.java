@@ -37,7 +37,7 @@ public class SpringCloudSourceBase extends AbstractRequestBasedSourceBase{
 
     // return restTemplate.getForEntity("http://config-server/user-service-dev.json", Object.class).getBody();
     // 这个时候 request headers 应当已经被处理好保留字段，只需要封装入client
-    //TODO timeout 应当于外部已经被设定
+    // TODO timeout 问题，因为resttemplate 封装是在 factory 的时候传入2个timeout，当我们拿到的RestTemplate 事实上已经是不再能设置timeout了。这个封装问题需要注意
     public Object doRequest(RequestMessage requestMessage, Context context) throws SourceException{
         String method                           = requestMessage.getMethod();
         HashMap<String, String> requestheaders  = requestMessage.getHeaderParameters();

@@ -1,16 +1,14 @@
 package com.gomeplus.comx.boot;
 
 import com.gomeplus.comx.source.sourcebase.SourceBaseFactory;
-import com.gomeplus.comx.utils.cache.AbstractCache;
-import com.gomeplus.comx.utils.cache.CacheFactory;
+import com.gomeplus.comx.utils.redis.AbstractCache;
+import com.gomeplus.comx.utils.redis.CacheFactory;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -29,7 +27,7 @@ public class ComxConfLoader {
 
 
     private static final String FIELD_URL_PREFIX    = "urlPrefix";
-    private static final String FIELD_CACHE         = "cache";
+    private static final String FIELD_CACHE         = "redis";
 
     static {
         Properties prop = new Properties();

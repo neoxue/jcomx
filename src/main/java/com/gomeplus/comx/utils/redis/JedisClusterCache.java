@@ -1,11 +1,10 @@
-package com.gomeplus.comx.utils.cache;
+package com.gomeplus.comx.utils.redis;
 
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,10 +38,10 @@ public class JedisClusterCache extends AbstractCache{
     public String get(String key) {
         return jc.get(key);
     }
-    public String set(String key, String value) {
-        return jc.set(key, value);
+    public void set(String key, String value) {
+        jc.set(key, value);
     }
-    public String set(String key, String value, Integer time) {
-        return jc.setex(key, time, value);
+    public void set(String key, String value, Integer time) {
+        jc.setex(key, time, value);
     }
 }

@@ -2,54 +2,43 @@ package com.gomeplus.comx.context;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.gomeplus.comx.utils.cache.AbstractCache;
+import com.gomeplus.comx.utils.redis.AbstractCache;
 
 import java.util.Map;
 
 /**
  * Created by xue on 1/3/17.
- * context cache 业务相关及日志等 封装在这里，业务直接调用，不直接使用utils/cache
- * 每个请求将有一个contextcache 实例 , utils/cache 同一个
+ * context redis 业务相关及日志等 封装在这里，业务直接调用，不直接使用utils/redis
+ * 每个请求将有一个contextcache 实例 , utils/redis 同一个
  * TODO 针对 key 需要做处理 （特殊字符, 空格等)
- * TODO 存储value 自己设定一个结构体?
+ * TODO springframework.data.redis.core 当中有一个interface ValueOperations 若有必要，其实 AbstractCache 是那个interface
  */
 public class ContextCache {
     private AbstractCache cache;
     private Boolean refreshingEnabled;
+
     public ContextCache(AbstractCache cache, Boolean refreshingEnabled) {
         this.cache = cache;
         this.refreshingEnabled = refreshingEnabled;
     }
 
-    public String setMapObject(String key, Map value, Integer time) {
-        //System.out.println("set "+ key);
-        JSONObject jsonObject = new JSONObject(value);
-        return cache.set(key, jsonObject.toJSONString(), time);
+    public void set(String key, Object value, Integer ttl) {
+        JSONObject valueObj = new JSONObject();
+        valueObj.put("v", value);
+        cache.set(key, valueObj.toJSONString(), ttl);
     }
 
-    public Object getMapObject(String key) {
-        //System.out.println("get "+ key);
+    public Object get(String key) {
         if (refreshingEnabled) return null;
-        String value = cache.get(key);
         try {
-            return JSON.parseObject(value);
+            String valueStr = cache.get(key);
+            JSONObject valueObj = JSON.parseObject(valueStr);
+            return valueObj.get("v");
         } catch (Exception ex) {
-            // TODO 解析失败 记录日志
             ex.printStackTrace();
-            System.out.println(ex.getMessage());
-            return value;
+            return null;
         }
     }
-
-
-
-    public String set(String key, String value, Integer time) {
-        return cache.set(key, value, time);
-    }
-    public String set(String key, String value) {
-        return cache.set(key, value);
-    }
-    public String get(String key) {
-        return refreshingEnabled? null:cache.get(key);
-    }
 }
+
+

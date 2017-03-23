@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -22,8 +23,8 @@ public class Context {
     private ResponseMessage         response;
     private ComxLogger              logger;
     private ContextCache            cache;
-    // concurrent hashmap
-    private HashMap<String, Object> localCache = new HashMap<>();
+
+    private ConcurrentHashMap<String, Object> localCache = new ConcurrentHashMap<>();
     private Boolean                 localCacheEnabled = false;
 
     private String          traceId;
@@ -33,11 +34,10 @@ public class Context {
     // 似乎可以是个结构体来记录
     // 或者redis count http count ...?
     private Integer         count = 0;
-    // 先不处理
-    //private ScriptLoader scriptLoader;
 
     // TODO 重构
     RestTemplate restTemplate;
+
 
 
 
@@ -66,11 +66,11 @@ public class Context {
         this.localCacheEnabled = localCacheEnabled;
     }
 
-    public HashMap<String, Object> getLocalCache() {
+    public ConcurrentHashMap<String, Object> getLocalCache() {
         return localCache;
     }
 
-    public void setLocalCache(HashMap<String, Object> localCache) {
+    public void setLocalCache(ConcurrentHashMap<String, Object> localCache) {
         this.localCache = localCache;
     }
 

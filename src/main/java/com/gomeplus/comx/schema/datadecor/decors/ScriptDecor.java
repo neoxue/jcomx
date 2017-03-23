@@ -49,8 +49,8 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
         List matchedNodes = getMatchedNodes(conf, data, context);
 
         try {
-            String scriptName = conf.str("jscript", "");
-            String lambda     = conf.str("jlambda", "");
+            String scriptName = conf.str("gscript", "");
+            String lambda     = conf.str("glambda", "");
             if (!scriptName.isEmpty()) {
                 Class scriptClass = groovyScriptEngine.loadScriptByName(scriptName + ".groovy");
                 GroovyObject scriptInstance = (GroovyObject) scriptClass.newInstance();
@@ -74,7 +74,7 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
             }
             // do nothing
         } catch (Exception ex) {
-            // 有以下错误
+            // 有以下错误 TODO 需要分别对待
             //(ResourceException | ScriptException | InstantiationException | IllegalAccessException e1)
             throw new DecorException(ex);
         }

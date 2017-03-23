@@ -37,7 +37,7 @@ public class Source {
 
 
 
-    static final String FIELD_CACHE                 = "cache";
+    static final String FIELD_CACHE                 = "redis";
     static final String SOURCE_CACHE_KEY_PREFIX     = "Source:";
     static final String SOURCE_CACHE_TTL            = "ttl:";
     static final String SOURCE_CACHE_KEY            = "key";
@@ -91,8 +91,8 @@ public class Source {
     }
 
 
-    // TODO 确认 cache 中是否可以自设置 key
-    // cache 包含key 都是属于 decorcache
+    // TODO 确认 redis 中是否可以自设置 key
+    // redis 包含key 都是属于 decorcache
     // TODO 再次确认 request 是否可以放在外层
     private Object doLoadData(Context context, HashMap<String, Object> reservedVariables) throws  IOException, UnmatchedRequestMethodException, Exception{
         try {
@@ -124,7 +124,7 @@ public class Source {
         return SourceBaseFactory.getSourceBase(baseId);
     }
 
-    // get cache 失败不影响流程继续进行， 但应加入日志
+    // get redis 失败不影响流程继续进行， 但应加入日志
     private Object loadCache(Context context, String renderedUri) throws ConfigException{
         // localcache 部分
         String localCacheKey = this.getBase(context).getId() + ":" + renderedUri;
@@ -135,17 +135,16 @@ public class Source {
         try {
             Config cacheConf = conf.sub(FIELD_CACHE);
             if (cacheConf.rawData().isEmpty()) return null;
-            return context.getCache().getMapObject(SOURCE_CACHE_KEY_PREFIX + renderedUri);
+            return context.getCache().get(SOURCE_CACHE_KEY_PREFIX + renderedUri);
         } catch (Exception ex) {
             context.getLogger().error("Source loading: getCache error:" + ex.getMessage() + "; " + ex.getClass());
-            // TODO 是否如此记录
-            ex.printStackTrace();
+            context.getLogger().error(ex);
             return null;
         }
     }
 
-    // set cache 失败不影响流程继续进行， 但应加入日志
-    private void setCache(Context context, String renderedUri, Object data) throws ConfigException {
+    // set redis 失败不影响流程继续进行， 但应加入日志
+    private void setCache(Context context, String renderedUri, Object data) throws ConfigException{
         // localcache 部分
         String localCacheKey = this.getBase(context).getId() + ":" + renderedUri;
         if (context.getLocalCacheEnabled()) context.getLocalCache().put(localCacheKey, data);
@@ -156,15 +155,15 @@ public class Source {
             Config cacheConf = conf.sub(FIELD_CACHE);
             if (cacheConf.rawData().isEmpty()) return;
             Integer ttl = cacheConf.intvalue(SOURCE_CACHE_TTL, SOURCE_CACHE_TTL_DEFAULT);
-            if (data instanceof Map) {
-                context.getCache().setMapObject(key, (Map) data, ttl);
-            } else {
-                context.getCache().set(key, data.toString(), ttl);
-            }
+            context.getCache().set(key, data, ttl);
+            //if (data instanceof Map) {
+            //    context.getCache().setMapObject(key, (Map) data, ttl);
+            //} else {
+            //    context.getCache().set(key, data.toString(), ttl);
+            //}
         } catch (Exception ex) {
             context.getLogger().error("Source loading: setCache error:" + ex.getMessage() + "; " + ex.getClass());
-            // TODO 是否如此记录
-            ex.printStackTrace();
+            context.getLogger().error(ex);
         }
     }
 

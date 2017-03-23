@@ -10,7 +10,9 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.client.RestTemplate;
+
 
 /**
  * Created by xue on 2/3/17.
@@ -28,6 +30,8 @@ public class ComxSpringCloudApplication {
         return new RestTemplate();
     }
 
+    @Autowired
+    private RedisTemplate<String, String> template;
 
     public static void main(String[] args) {
         long starTime = System.currentTimeMillis();

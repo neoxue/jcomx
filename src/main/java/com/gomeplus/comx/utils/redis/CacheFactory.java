@@ -1,4 +1,4 @@
-package com.gomeplus.comx.utils.cache;
+package com.gomeplus.comx.utils.redis;
 
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;

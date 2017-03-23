@@ -20,7 +20,7 @@ import java.util.Set;
  */
 public abstract class AbstractDecor extends ConfBaseNode{
     public static final String FIELD_DECORS                = "decors";
-    public static final String FIELD_CACHE                 = "cache";
+    public static final String FIELD_CACHE                 = "redis";
     public static final String FIELD_PRECONDITION          = "precondition";
     public static final String FIELD_LOCAL_CACHE_ENABLED   = "localCacheEnabled";
     // localCache 未启用

@@ -1,12 +1,11 @@
 package com.gomeplus.comx.source.sourcebase;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.source.Source;
 import com.gomeplus.comx.source.SourceException;
-import com.gomeplus.comx.utils.cache.CacheFactory;
-import com.gomeplus.comx.utils.cache.JedisClusterCache;
+import com.gomeplus.comx.utils.redis.CacheFactory;
+import com.gomeplus.comx.utils.redis.JedisClusterCache;
 import com.gomeplus.comx.utils.config.Config;
 import com.gomeplus.comx.utils.config.ConfigException;
 

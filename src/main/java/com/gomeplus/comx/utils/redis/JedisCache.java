@@ -1,4 +1,4 @@
-package com.gomeplus.comx.utils.cache;
+package com.gomeplus.comx.utils.redis;
 
 /**
  * Created by xue on 1/3/17.

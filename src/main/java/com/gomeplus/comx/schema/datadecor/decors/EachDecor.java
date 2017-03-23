@@ -35,7 +35,7 @@ public class EachDecor extends AbstractDecor implements RefJsonPath{
         //for (Object ref: matchedNodes) {
         //    this.decorateOneNode(ref, data, context);
         //}
-        // 其实ref 是一个 map (之后在最前面约束ref 为 map)
+        // ref 并不一定是一个map, 但 map 并非 map 的时候，map 将不能够新增
         ArrayList<Exception> exceptions = new ArrayList<>();
         matchedNodes.parallelStream().forEach(ref -> {
             try {
