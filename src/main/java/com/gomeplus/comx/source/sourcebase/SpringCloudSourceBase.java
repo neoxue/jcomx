@@ -60,7 +60,13 @@ public class SpringCloudSourceBase extends AbstractRequestBasedSourceBase{
                 throw new SourceBizException(responseEntity.getBody().toString(), Integer.parseInt(responseEntity.getStatusCode().toString()));
             }
         } catch (HttpClientErrorException ex) {
+            context.getLogger().error( "SouceLoading, Springcloud URI: " + aURI.toString() + " error_message: " + ex.getMessage());
+            context.getLogger().error(ex);
             throw new SourceBizException(ex.getStatusText(), Integer.parseInt(ex.getStatusCode().toString()));
+        } catch (Exception ex) {
+            context.getLogger().error( "SouceLoading, Springcloud URI: " + aURI.toString() + " error_message: " + ex.getMessage());
+            context.getLogger().error(ex);
+            throw new SourceBizException(ex.getMessage(), 500);
         }
     }
 }

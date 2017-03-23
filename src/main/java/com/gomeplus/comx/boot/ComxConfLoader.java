@@ -27,7 +27,7 @@ public class ComxConfLoader {
 
 
     private static final String FIELD_URL_PREFIX    = "urlPrefix";
-    private static final String FIELD_CACHE         = "redis";
+    private static final String FIELD_CACHE         = "cache";
 
     static {
         Properties prop = new Properties();

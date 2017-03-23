@@ -3,6 +3,7 @@ package com.gomeplus.comx.boot.server;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gomeplus.comx.boot.BootStrap;
+import com.gomeplus.comx.utils.redis.SpringbootRedis;
 import com.gomeplus.comx.utils.rest.RequestMessage;
 import com.gomeplus.comx.utils.rest.ResponseMessage;
 import com.gomeplus.comx.utils.rest.Url;
@@ -13,6 +14,7 @@ import com.gomeplus.oversea.bs.common.exception.code3xx.C302Exception;
 import com.gomeplus.oversea.bs.common.exception.code4xx.*;
 import com.gomeplus.oversea.bs.common.exception.code5xx.C500Exception;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +33,12 @@ import java.util.HashMap;
 public class ComxSpringCloudEntrance {
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @RequestMapping(value = "/**")
     public void boot(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        SpringbootRedis.setTemplate(redisTemplate);
         ResponseMessage responseMessage;
         Boolean springSwitch = true;
         try {
@@ -57,8 +62,6 @@ public class ComxSpringCloudEntrance {
             String msg = "unserialize post data error:" + ex.getMessage();
             responseMessage = new ResponseMessage(null, msg, 500);
         }
-
-        //printfull(responseMessage, response);
         if (springSwitch)   print(responseMessage, response);
         else                printfull(responseMessage, response);
     }
@@ -74,7 +77,7 @@ public class ComxSpringCloudEntrance {
     }
 
     public void printfull(ResponseMessage responseMessage, HttpServletResponse response) throws IOException{
-        response.setContentType("text/json;charset=utf-8");
+        response.setContentType("application/json;charset=utf-8");
         response.setStatus(responseMessage.getCode());
         response.getWriter().println(responseMessage.send());
     }

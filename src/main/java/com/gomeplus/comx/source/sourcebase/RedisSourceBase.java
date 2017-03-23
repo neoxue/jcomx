@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.gomeplus.comx.context.Context;
 import com.gomeplus.comx.source.Source;
 import com.gomeplus.comx.source.SourceException;
+import com.gomeplus.comx.utils.redis.AbstractCache;
 import com.gomeplus.comx.utils.redis.CacheFactory;
 import com.gomeplus.comx.utils.redis.JedisClusterCache;
 import com.gomeplus.comx.utils.config.Config;
@@ -21,7 +22,7 @@ public class RedisSourceBase extends AbstractSourceBase{
     public RedisSourceBase(Config conf) {
         super(conf);
     }
-    public JedisClusterCache getRedisClient() throws ConfigException{
+    public AbstractCache getRedisClient() throws ConfigException{
         return CacheFactory.fromConf(conf);
     }
     public Object executeLoading(Context context, Config sourceOptions, HashMap<String, Object> reservedVariables) throws ConfigException, SourceException{

@@ -45,7 +45,7 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
     }
 
     public void doDecorate(Object data, Context context) throws DecorException{
-        context.getLogger().error("Decor ScriptDecor: init:" + conf.rawData());
+        context.getLogger().trace("Decor ScriptDecor: init:" + conf.rawData());
         List matchedNodes = getMatchedNodes(conf, data, context);
 
         try {
@@ -70,7 +70,7 @@ public class ScriptDecor extends AbstractDecor implements RefJsonPath{
                     shell.evaluate(lambda);
                 }
             } else {
-                context.getLogger().error("Decor, ScriptDecor jscript or jlambda empty");
+                context.getLogger().error("Decor, ScriptDecor gscript or glambda empty");
             }
             // do nothing
         } catch (Exception ex) {

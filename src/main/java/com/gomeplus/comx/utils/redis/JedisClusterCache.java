@@ -15,14 +15,15 @@ import java.util.Set;
  * since Jedis pool is multithread-safe, it's not neccessary to get a JedisCluster pool;
  * 并封装 不同版本jedis 不一样 函数
  */
-public class JedisClusterCache extends AbstractCache{
+public class JedisClusterCache implements AbstractCache{
 
 
+    private Config config;
     private JedisCluster jc;
 
 
     JedisClusterCache(Config config) throws ConfigException{
-        super(config);
+        this.config = config;
         Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
 
         Config servers = config.rsub("redis").rsub("servers");

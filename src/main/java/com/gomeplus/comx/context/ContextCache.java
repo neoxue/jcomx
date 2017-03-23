@@ -32,6 +32,7 @@ public class ContextCache {
         if (refreshingEnabled) return null;
         try {
             String valueStr = cache.get(key);
+            if (null == valueStr) return null;
             JSONObject valueObj = JSON.parseObject(valueStr);
             return valueObj.get("v");
         } catch (Exception ex) {

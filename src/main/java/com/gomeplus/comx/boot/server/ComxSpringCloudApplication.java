@@ -30,9 +30,6 @@ public class ComxSpringCloudApplication {
         return new RestTemplate();
     }
 
-    @Autowired
-    private RedisTemplate<String, String> template;
-
     public static void main(String[] args) {
         long starTime = System.currentTimeMillis();
         SpringApplication.run(ComxSpringCloudApplication.class, args);

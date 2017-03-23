@@ -37,9 +37,9 @@ public class Source {
 
 
 
-    static final String FIELD_CACHE                 = "redis";
+    static final String FIELD_CACHE                 = "cache";
     static final String SOURCE_CACHE_KEY_PREFIX     = "Source:";
-    static final String SOURCE_CACHE_TTL            = "ttl:";
+    static final String SOURCE_CACHE_TTL            = "ttl";
     static final String SOURCE_CACHE_KEY            = "key";
     static final Integer SOURCE_CACHE_TTL_DEFAULT   = 300;
 
@@ -151,16 +151,11 @@ public class Source {
         // sourcecache 部分
         try {
             String key = SOURCE_CACHE_KEY_PREFIX + renderedUri;
-            context.getLogger().trace("Source loading: setCache key:" + key);
             Config cacheConf = conf.sub(FIELD_CACHE);
             if (cacheConf.rawData().isEmpty()) return;
+            context.getLogger().trace("Source loading: setCache key:" + key);
             Integer ttl = cacheConf.intvalue(SOURCE_CACHE_TTL, SOURCE_CACHE_TTL_DEFAULT);
             context.getCache().set(key, data, ttl);
-            //if (data instanceof Map) {
-            //    context.getCache().setMapObject(key, (Map) data, ttl);
-            //} else {
-            //    context.getCache().set(key, data.toString(), ttl);
-            //}
         } catch (Exception ex) {
             context.getLogger().error("Source loading: setCache error:" + ex.getMessage() + "; " + ex.getClass());
             context.getLogger().error(ex);
